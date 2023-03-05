@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const userRoutes = require('./Routes/User/userRouters.js');
+const enquiryRoutes = require('./Routes/Enquiry/enquiryRouters.js');
 const DatabaseConnection = require('./Database/database.js');
 
 const App = express();
@@ -19,6 +20,9 @@ App.use(bodyParser.urlencoded({
 /* --------- Routes --------- */
 // Users
 App.use('/api/v1/users', userRoutes);
+
+// Contact
+App.use('/api/v1/enquiry', enquiryRoutes);
 
 App.use('/', (req, res) => {
     res.status(404).json({
