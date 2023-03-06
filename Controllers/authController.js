@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require('bcrypt');
-const User = require("../Models/User/UserModel.js");
+const User = require("../Models/User/userModel.js");
 const Otp = require("../Models/Otp/otpModel.js");
 const nodeMailer = require('../Services/NodeMailer.js')
 const { authSchema, signupSchema, sendOtpSchema, recoverPasswordSchema } = require("../Helpers/validator.js");
@@ -284,5 +284,44 @@ exports.recoverPassword = async (req, res, next) => {
             });
         }
         next(error);
+    }
+}
+
+exports.deleteUser = async (req, res) => {
+    try {
+        const _id = req.params.id
+
+        await User.findByIdAndDelete({ _id })
+
+        res.status(200).json({
+            status: true,
+            message: "Account Deleted Successfully...!"
+        })
+
+    } catch (error) {
+        res.status(401).json({
+            status: false,
+            message: "Something went wrong, Please try again latter...!"
+        })
+    }
+}
+
+exports.updateUser = async (req, res) => {
+    try {
+        const _id = req.params.id;
+
+        await User.findByIdAndUpdate({ _id }, req.body)
+
+        return res.status(200).json({
+            status: true,
+            message: "Information Updated Successfully...!"
+        })
+
+
+    } catch (error) {
+        return res.status(400).json({
+            status: false,
+            message: "Something went wrong, Please try again latter...!"
+        })
     }
 }

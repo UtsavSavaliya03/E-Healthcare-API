@@ -8,5 +8,7 @@ router.post('/signup', authController.signup);
 router.get('/:id', auth, authController.findUser);
 router.post('/sendOtp', authController.sendOtpForPassword);
 router.post('/recoverPassword', authController.recoverPassword);
+router.delete('/:id', auth, authController.deleteUser);
+router.put('/:id', auth, authController.updateUser);
 
 module.exports = router;

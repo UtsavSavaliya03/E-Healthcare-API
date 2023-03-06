@@ -40,6 +40,41 @@ const replyEnquirySchema = Joi.object({
     reply: Joi.string().trim().required(),
 })
 
+const addDoctorSchema = Joi.object({
+    fName: Joi.string().trim().required(),
+    lName: Joi.string().trim().required(),
+    dateOfBirth: Joi.date().required(),
+    email: Joi.string().email().trim().required(),
+    mobileNo: Joi.string().trim().min(10).max(10).required(),
+    bloodGroup: Joi.string().trim().required(),
+    gender: Joi.string().required(),
+    shortBio: Joi.string().trim().required(),
+    experience: Joi.number().required(),
+    department: Joi.string().required(),
+    addressLine: Joi.string().required(),
+    city: Joi.string().trim().required(),
+    state: Joi.string().trim().required(),
+    pincode: Joi.number().required(),
+    country: Joi.string().trim().required(),
+});
+
+const addAppointmentSchema = Joi.object({
+    patientId: Joi.required(),
+    doctorId: Joi.required(),
+    fName: Joi.string().required(),
+    lName: Joi.string().required(),
+    email: Joi.string().email().required(),
+    mobileNo: Joi.string().required(),
+    appointmentDate: Joi.date().required(),
+    department: Joi.string().trim().required(),
+    doctor: Joi.string().trim().required(),
+    problem: Joi.string().trim().required(),
+})
+
+const newsletterSchema = Joi.object({
+    email: Joi.string().email().required(),
+})
+
 module.exports = {
     authSchema,
     signupSchema,
@@ -47,4 +82,7 @@ module.exports = {
     recoverPasswordSchema,
     enquirySchema,
     replyEnquirySchema,
+    addDoctorSchema,
+    addAppointmentSchema,
+    newsletterSchema
 };
