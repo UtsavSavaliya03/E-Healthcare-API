@@ -19,7 +19,7 @@ exports.addAppointment = async (req, res, next) => {
 
         res.status(201).json({
             status: true,
-            message: "Your Appointment Requested Successfully...!",
+            message: "Your appointment requested successfully...!",
             data: appointment._id,
         });
 
@@ -45,7 +45,7 @@ exports.fetchAppointments = async (req, res) => {
     } catch (error) {
         res.status(401).json({
             status: false,
-            message: "Something went wrong, Please try again latter...!"
+            message: "Something went wrong, please try again latter...!"
         })
     }
 }
@@ -57,12 +57,12 @@ exports.deleteAppointment = async (req, res) => {
         await Appointment.findByIdAndDelete({ _id })
         res.status(200).json({
             status: true,
-            message: "Appointment Canceled Successfully...!",
+            message: "Appointment deleted successfully...!",
         })
     } catch (error) {
         return res.status(400).json({
             status: false,
-            message: "Something went wrong, Please try again latter...!"
+            message: "Something went wrong, please try again latter...!"
         })
     }
 }
@@ -75,13 +75,30 @@ exports.updateAppointment = async (req, res) => {
 
         return res.status(200).json({
             status: true,
-            message: "Appointment's Information Updated Successfully...!"
+            message: "Appointment's information udated successfully...!"
         })
 
     } catch (error) {
         return res.status(400).json({
             status: false,
             message: "Something went wrong, Please try again latter...!"
+        })
+    }
+}
+
+exports.cancelAppointment = async (req, res) => {
+    try {
+        const _id = req.params.id;
+
+        await Appointment.findByIdAndUpdate({ _id }, { $set: { active: false } })
+        res.status(200).json({
+            status: true,
+            message: "Appointment canceled successfully...!",
+        })
+    } catch (error) {
+        return res.status(400).json({
+            status: false,
+            message: "Something went wrong, please try again latter...!"
         })
     }
 }

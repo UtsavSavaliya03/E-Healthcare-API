@@ -32,7 +32,7 @@ exports.addDoctor = async (req, res) => {
             })
             res.status(201).json({
                 status: true,
-                message: "Doctor Added Successfully...!",
+                message: "Doctor added successfully...!",
                 data: doctor._id,
             });
         }
@@ -72,12 +72,12 @@ exports.deleteDoctor = async (req, res) => {
         await Doctor.findByIdAndDelete({ _id })
         res.status(200).json({
             status: true,
-            message: "Doctor's Detail Deleted Successfully...!",
+            message: "Doctor's detail deleted successfully...!",
         })
     } catch (error) {
         return res.status(400).json({
             status: false,
-            message: "Doctor's Information Does exist...!"
+            message: "Doctor's information does exist...!"
         })
     }
 }
@@ -92,14 +92,14 @@ exports.updateDoctor = async (req, res) => {
 
         return res.status(200).json({
             status: true,
-            message: "Doctor's Information Updated Successfully...!"
+            message: "Doctor's information updated successfully...!"
         })
 
 
     } catch (error) {
         return res.status(400).json({
             status: false,
-            message: "Doctor's Information Does exist...!"
+            message: "Doctor's information does exist...!"
         })
     }
 }

@@ -12,7 +12,7 @@ exports.subscribeNewsletter = async (req, res, next) => {
 
         res.status(200).json({
             status: true,
-            message: "NewsLetter Successfully Sent To Your E-Mail Address...!",
+            message: "NewsLetter successfully sent to your e-mail address...!",
         });
 
     } catch (error) {
