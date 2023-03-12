@@ -1,7 +1,7 @@
 const express = require('express');
 const router = new express.Router();
 const doctorController = require('../../Controllers/doctorController.js');
-const auth=require('../../Middleware/auth.js');
+const auth = require('../../Middleware/auth.js');
 
 router.post('/', auth, doctorController.addDoctor);
 router.get('/', auth, doctorController.fetchDoctors);

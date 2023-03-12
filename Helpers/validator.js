@@ -75,6 +75,11 @@ const newsletterSchema = Joi.object({
     email: Joi.string().email().required(),
 })
 
+const departmentSchema = Joi.object({
+    departmentName: Joi.string().trim().required(),
+    description: Joi.string().trim().required(),
+})
+
 module.exports = {
     authSchema,
     signupSchema,
@@ -84,5 +89,6 @@ module.exports = {
     replyEnquirySchema,
     addDoctorSchema,
     addAppointmentSchema,
-    newsletterSchema
+    newsletterSchema,
+    departmentSchema
 };
