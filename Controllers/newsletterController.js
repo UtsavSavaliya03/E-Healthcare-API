@@ -5,16 +5,24 @@ exports.subscribeNewsletter = async (req, res, next) => {
     try {
         const validateResult = await newsletterSchema.validateAsync(req.body);
 
-        await Newsletter.create({
-            email: validateResult?.email
-        })
-    
+        const isUserExist = await Newsletter.findOne({ email: validateResult?.email });
 
-        res.status(200).json({
-            status: true,
-            message: "NewsLetter Successfully Sent To Your E-Mail Address...!",
-        });
-
+        if (isUserExist !== null) {
+            return res.status(200).json({
+                status: true,
+                message: "Successfully Subscribed...!",
+            })
+        } else {
+            await Newsletter.create({
+                email: validateResult?.email
+            })
+                .then(() => {
+                    res.status(200).json({
+                        status: true,
+                        message: "Successfully Subscribed...!",
+                    });
+                })
+        }
     } catch (error) {
         if (error.isJoi === true) {
             return res.status(422).json({

@@ -47,9 +47,10 @@ const appointmentSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    active: {
-        type: Boolean,
-        default: true,
+    status: {
+        /* ------- (0 - PENDING), (1 - APPROVED), (2 - COMPLETED), (3 - CANCELLED) ------- */
+        type: Number,
+        default: 0,
     },
     isConfirmed: {
         type: Boolean,

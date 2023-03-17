@@ -4,6 +4,8 @@ const bodyParser = require('body-parser');
 const userRoutes = require('./Routes/User/userRouters.js');
 const enquiryRoutes = require('./Routes/Enquiry/enquiryRouters.js');
 const doctorRoutes = require('./Routes/Doctor/doctorRouters.js');
+const departmentRoutes = require('./Routes/Department/departmentRouters.js');
+const hospitalRoutes = require('./Routes/Hospital/hospitalRouters.js');
 const patientRoutes = require('./Routes/Patient/patientRouters.js');
 const appointmentRoutes = require('./Routes/Appointment/appointmentRouters.js');
 const newsletterRoutes = require('./Routes/Newsletter/newsletterRoutes.js');
@@ -31,6 +33,12 @@ App.use('/api/v1/enquiry', enquiryRoutes);
 
 // Doctor
 App.use('/api/v1/doctor', doctorRoutes);
+
+// Department
+App.use('/api/v1/department', departmentRoutes);
+
+// Hospital
+App.use('/api/v1/hospital', hospitalRoutes);
 
 // Patient
 App.use('/api/v1/patient', patientRoutes);

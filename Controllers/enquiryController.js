@@ -1,5 +1,6 @@
 const Enquiry = require('../Models/Enquiry/enquiryModel.js');
 const { enquirySchema, replyEnquirySchema } = require('../Helpers/validator.js');
+const nodeMailer = require('../Services/NodeMailer.js');
 
 exports.enquiry = async (req, res, next) => {
     try {
@@ -12,7 +13,6 @@ exports.enquiry = async (req, res, next) => {
             email: validateResult?.email,
             mobileNo: validateResult?.mobileNo,
             message: validateResult?.message,
-            type: validateResult?.type
         })
             .then((result) => {
                 return (
@@ -44,7 +44,17 @@ exports.enquiry = async (req, res, next) => {
 exports.fetchEnquiry = async (req, res, next) => {
     try {
         if (req.query.status == 'unread') {
-            await Enquiry.find({ status: true }).sort({createdAt: -1})
+            await Enquiry.find({ status: true }).sort({ createdAt: -1 })
+                .then((results) => {
+                    return (
+                        res.status(200).json({
+                            status: true,
+                            data: results,
+                        })
+                    )
+                })
+        } else if (req.query.status == 'read') {
+            await Enquiry.find({ status: false }).sort({ createdAt: -1 })
                 .then((results) => {
                     return (
                         res.status(200).json({
@@ -54,7 +64,7 @@ exports.fetchEnquiry = async (req, res, next) => {
                     )
                 })
         } else {
-            await Enquiry.find().sort({createdAt: -1})
+            await Enquiry.find().sort({ createdAt: -1 })
                 .then((results) => {
                     return (
                         res.status(200).json({
@@ -85,12 +95,15 @@ exports.replyEnquiry = async (req, res, next) => {
                 status: false,
                 reply: validateResult?.reply
             }
-        })
+        }, { new: true })
             .then((results) => {
+                const name = results.fName + ' ' + results.lName;
+                const header = validateResult?.header;
+                nodeMailer('EnquiryResponse', results.email, header, name, validateResult?.reply);
                 return (
                     res.status(200).json({
                         status: true,
-                        message: 'Success',
+                        message: 'Response sent Successfully.',
                     })
                 )
             })

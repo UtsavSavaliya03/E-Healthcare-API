@@ -13,7 +13,6 @@ exports.addAppointment = async (req, res, next) => {
             mobileNo: validateResult?.mobileNo,
             appointmentDate: validateResult?.appointmentDate,
             department: validateResult?.department,
-            doctor: validateResult?.doctor,
             problem: validateResult?.problem
         })
 
