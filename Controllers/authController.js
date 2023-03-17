@@ -1,8 +1,9 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require('bcrypt');
 const User = require("../Models/User/userModel.js");
+const Doctor = require("../Models/Doctor/doctorModel.js");
 const Otp = require("../Models/Otp/otpModel.js");
-const nodeMailer = require('../Services/NodeMailer.js')
+const nodeMailer = require('../Services/NodeMailer.js');
 const { authSchema, signupSchema, sendOtpSchema, recoverPasswordSchema } = require("../Helpers/validator.js");
 
 const createToken = (id) => {
@@ -43,6 +44,69 @@ exports.login = async (req, res, next) => {
                             const token = createToken(user.id);
 
                             await User.findOneAndUpdate({ email: user.email }, {
+                                $set: { token: token }
+                            }).then(async () => {
+                                res.status(200).json({
+                                    status: true,
+                                    message: "Login successfully...!",
+                                    token: token,
+                                    data: {
+                                        _id: user._id,
+                                        fName: user.fName,
+                                        lName: user.lName,
+                                        email: user.email,
+                                        mobileNo: user.mobileNo,
+                                        role: user.role,
+                                    }
+                                })
+                            })
+                        }
+                    })
+                }
+            })
+            .catch((error) => {
+                console.log('Error while login:', error);
+                res.status(401).json({
+                    status: false,
+                    message: "Something went wrong, Please try again latter...!"
+                })
+            })
+    } catch (error) {
+        if (error.isJoi === true) {
+            return res.status(422).json({
+                status: false,
+                message: error?.details[0]?.message,
+            });
+        }
+        next(error);
+    }
+};
+exports.doctorLogin = async (req, res, next) => {
+    try {
+
+        // 1) validate email and password
+        const validateResult = await authSchema.validateAsync(req.body);
+
+        await Doctor.findOne({ email: validateResult?.email })
+            .exec()
+            .then((user) => {
+                if (user === null) {
+                    res.status(401).json({
+                        status: false,
+                        message: "Doctor does not exist...!"
+                    })
+                } else {
+                    bcrypt.compare(validateResult?.password, user.password, async (err, result) => {
+                        if (!result) {
+                            return res.status(401).json({
+                                status: false,
+                                message: 'Password does not match...!'
+                            })
+                        } else {
+                            // Generate Token
+                            const token = createToken(user.id);
+
+                            await Doctor.findOneAndUpdate({ email: user.email }, {
                                 $set: { token: token }
                             }).then(async () => {
                                 res.status(200).json({
@@ -188,7 +252,8 @@ exports.sendOtpForPassword = async (req, res, next) => {
 
                                 /* ---- Sending email to user ---- */
                                 const name = user.fName + ' ' + user.lName;
-                                nodeMailer(user.email, otpCode, name);
+                                const header = 'Password recovery email from Health Horizon';
+                                nodeMailer('PasswordRecovery', user.email, header, name, '',otpCode);
 
                                 return (
                                     res.status(200).json({

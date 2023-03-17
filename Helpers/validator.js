@@ -26,17 +26,17 @@ const recoverPasswordSchema = Joi.object({
 });
 
 const enquirySchema = Joi.object({
-    fName: Joi.string().trim(),
-    lName: Joi.string().trim(),
-    email: Joi.string().email().trim(),
-    mobileNo: Joi.string().trim().min(10).max(10),
-    message: Joi.string().trim().max(300),
-    type: Joi.string().uppercase().trim(),
+    fName: Joi.string().trim().required(),
+    lName: Joi.string().trim().required(),
+    email: Joi.string().email().trim().required(),
+    mobileNo: Joi.string().trim().min(10).max(10).required(),
+    message: Joi.string().trim().max(300).required(),
     status: Joi.boolean()
 });
 
 const replyEnquirySchema = Joi.object({
     enquiryId: Joi.string().trim().required(),
+    header: Joi.string().trim().required(),
     reply: Joi.string().trim().required(),
 })
 
@@ -51,28 +51,50 @@ const addDoctorSchema = Joi.object({
     shortBio: Joi.string().trim().required(),
     experience: Joi.number().required(),
     department: Joi.string().required(),
+    hospital: Joi.string().required(),
     addressLine: Joi.string().required(),
-    city: Joi.string().trim().required(),
-    state: Joi.string().trim().required(),
+    country: Joi.object().required(),
+    state: Joi.object(),
+    city: Joi.object(),
     pincode: Joi.number().required(),
-    country: Joi.string().trim().required(),
 });
 
 const addAppointmentSchema = Joi.object({
-    patientId: Joi.required(),
-    doctorId: Joi.required(),
+    patientId: Joi.string().required(),
+    doctorId: Joi.string().required(),
     fName: Joi.string().required(),
     lName: Joi.string().required(),
     email: Joi.string().email().required(),
     mobileNo: Joi.string().required(),
     appointmentDate: Joi.date().required(),
     department: Joi.string().trim().required(),
-    doctor: Joi.string().trim().required(),
     problem: Joi.string().trim().required(),
 })
 
 const newsletterSchema = Joi.object({
     email: Joi.string().email().required(),
+})
+
+const addHospitalSchema = Joi.object({
+    name: Joi.string().trim().required(),
+    email: Joi.string().email().trim().required(),
+    mobileNo: Joi.string().trim().min(10).max(10).required(),
+    shortBio: Joi.string().trim().required(),
+    addressLine: Joi.string().required(),
+    state: Joi.object(),
+    city: Joi.object(),
+})
+
+const searchHospitalSchema = Joi.object({
+    name: Joi.string().trim(),
+    state: Joi.object(),
+    city: Joi.object(),
+})
+
+const addDepartmentSchema = Joi.object({
+    name: Joi.string().trim().required(),
+    description: Joi.string().trim().required(),
+    status: Joi.boolean().required(),
 })
 
 module.exports = {
@@ -84,5 +106,8 @@ module.exports = {
     replyEnquirySchema,
     addDoctorSchema,
     addAppointmentSchema,
-    newsletterSchema
+    newsletterSchema,
+    addHospitalSchema,
+    searchHospitalSchema,
+    addDepartmentSchema
 };

@@ -4,6 +4,7 @@ const authController = require('../../Controllers/authController.js');
 const auth = require('../../Middleware/auth.js');
 
 router.post('/login', authController.login);
+router.post('/doctorLogin', authController.doctorLogin);
 router.post('/signup', authController.signup);
 router.get('/:id', auth, authController.findUser);
 router.post('/sendOtp', authController.sendOtpForPassword);

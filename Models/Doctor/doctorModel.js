@@ -41,19 +41,25 @@ const doctorSchema = new mongoose.Schema({
         required: true
     },
     department: {
-        type: String,
-        required: true
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: 'Department'
+    },
+    hospital: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: 'Hospital'
     },
     addressLine: {
         type: String,
         required: true
     },
     state: {
-        type: String,
+        type: Object,
         required: true
     },
     city: {
-        type: String,
+        type: Object,
         required: true
     },
     pincode: {
@@ -61,8 +67,15 @@ const doctorSchema = new mongoose.Schema({
         required: true
     },
     country: {
-        type: String,
+        type: Object,
         required: true
+    },
+    token: {
+        type: String,
+    },
+    role: {
+        type: Number,
+        default: 1
     },
     active: {
         type: Boolean,

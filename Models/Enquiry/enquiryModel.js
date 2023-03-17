@@ -20,9 +20,6 @@ const enquirySchema = new mongoose.Schema({
     reply: {
         type: String,
     },
-    type: {
-        type: String,
-    },
     status: {
         type: Boolean,
         default: true
