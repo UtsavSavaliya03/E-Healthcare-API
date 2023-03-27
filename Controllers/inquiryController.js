@@ -1,13 +1,13 @@
-const Enquiry = require('../Models/Enquiry/enquiryModel.js');
-const { enquirySchema, replyEnquirySchema } = require('../Helpers/validator.js');
+const Inquiry = require('../Models/Inquiry/inquiryModel.js');
+const { inquirySchema, replyInquirySchema } = require('../Helpers/validator.js');
 const nodeMailer = require('../Services/NodeMailer.js');
 
-exports.enquiry = async (req, res, next) => {
+exports.inquiry = async (req, res, next) => {
     try {
 
-        const validateResult = await enquirySchema.validateAsync(req.body);
+        const validateResult = await inquirySchema.validateAsync(req.body);
 
-        await Enquiry.create({
+        await Inquiry.create({
             fName: validateResult?.fName,
             lName: validateResult?.lName,
             email: validateResult?.email,
@@ -22,7 +22,7 @@ exports.enquiry = async (req, res, next) => {
                     })
                 )
             }).catch((error) => {
-                console.log('Error while adding enquiry info: ', error);
+                console.log('Error while adding inquiry info: ', error);
                 return (
                     res.status(401).json({
                         status: false,
@@ -41,10 +41,10 @@ exports.enquiry = async (req, res, next) => {
     }
 };
 
-exports.fetchEnquiry = async (req, res, next) => {
+exports.fetchInquiry = async (req, res, next) => {
     try {
         if (req.query.status == 'unread') {
-            await Enquiry.find({ status: true }).sort({ createdAt: -1 })
+            await Inquiry.find({ status: true }).sort({ createdAt: -1 })
                 .then((results) => {
                     return (
                         res.status(200).json({
@@ -54,7 +54,7 @@ exports.fetchEnquiry = async (req, res, next) => {
                     )
                 })
         } else if (req.query.status == 'read') {
-            await Enquiry.find({ status: false }).sort({ createdAt: -1 })
+            await Inquiry.find({ status: false }).sort({ createdAt: -1 })
                 .then((results) => {
                     return (
                         res.status(200).json({
@@ -64,7 +64,7 @@ exports.fetchEnquiry = async (req, res, next) => {
                     )
                 })
         } else {
-            await Enquiry.find().sort({ createdAt: -1 })
+            await Inquiry.find().sort({ createdAt: -1 })
                 .then((results) => {
                     return (
                         res.status(200).json({
@@ -85,12 +85,12 @@ exports.fetchEnquiry = async (req, res, next) => {
     }
 }
 
-exports.replyEnquiry = async (req, res, next) => {
+exports.replyInquiry = async (req, res, next) => {
 
-    const validateResult = await replyEnquirySchema.validateAsync(req.body);
+    const validateResult = await replyInquirySchema.validateAsync(req.body);
 
     try {
-        await Enquiry.findOneAndUpdate({ _id: validateResult.enquiryId, status: true }, {
+        await Inquiry.findOneAndUpdate({ _id: validateResult.inquiryId, status: true }, {
             $set: {
                 status: false,
                 reply: validateResult?.reply
@@ -99,7 +99,7 @@ exports.replyEnquiry = async (req, res, next) => {
             .then((results) => {
                 const name = results.fName + ' ' + results.lName;
                 const header = validateResult?.header;
-                nodeMailer('EnquiryResponse', results.email, header, name, validateResult?.reply);
+                nodeMailer('InquiryResponse', results.email, header, name, validateResult?.reply);
                 return (
                     res.status(200).json({
                         status: true,
@@ -108,7 +108,7 @@ exports.replyEnquiry = async (req, res, next) => {
                 )
             })
             .catch((error) => {
-                console.log('Error while reply enquiry: ', error)
+                console.log('Error while reply inquiry: ', error)
             })
     } catch (error) {
         console.log('Error while adding contact info: ', error);
@@ -119,5 +119,24 @@ exports.replyEnquiry = async (req, res, next) => {
                 message: "Something went wrong, Please try again latter...!"
             })
         )
+    }
+}
+
+exports.deleteInquiry  = async (req, res, next) => {
+    try {
+        const _id = req.params.id;
+
+        await Inquiry.findOne({ _id })
+
+        await Inquiry.findByIdAndDelete({ _id })
+        res.status(200).json({
+            status: true,
+            message: "Inquiry deleted successfully...!",
+        })
+    } catch (error) {
+        return res.status(400).json({
+            status: false,
+            message: "Inquiry does not exist...!"
+        })
     }
 }

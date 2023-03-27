@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const enquirySchema = new mongoose.Schema({
+const inquirySchema = new mongoose.Schema({
     fName: {
         type: String,
     },
@@ -28,4 +28,4 @@ const enquirySchema = new mongoose.Schema({
     { timestamps: true }
 );
 
-module.exports = mongoose.model("Enquiry", enquirySchema, "Enquiries");
+module.exports = mongoose.model("Inquiry", inquirySchema, "Inquiries");

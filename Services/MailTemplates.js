@@ -10,7 +10,6 @@ exports.passwordRecoveryMail = (receiverEmail, subject, userName, otp) => {
 
         html: `<!DOCTYPE html>
         <html lang="en">
-        
         <head>
             <meta charset="UTF-8">
             <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -93,7 +92,7 @@ exports.passwordRecoveryMail = (receiverEmail, subject, userName, otp) => {
     })
 }
 
-exports.enquiryResponseMail = (receiverEmail, subject, userName, body) => {
+exports.inquiryResponseMail = (receiverEmail, subject, userName, body) => {
     return ({
         from: process.env.MAILER_EMAIL, // sender address
         to: receiverEmail, // list of receivers
@@ -101,55 +100,52 @@ exports.enquiryResponseMail = (receiverEmail, subject, userName, body) => {
         text: "Hi " + userName + body, // plain text body
         html: `<!DOCTYPE html>
         <html lang="en">
-        <meta charset="UTF-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <head>
-        <style>
-            body {
-                font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-            }
+            <meta charset="UTF-8">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <style>
+                body {
+                    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                }
+            
+                .container {
+                    width: 80%;
+                }
+            
+                .container .title {
+                    margin-bottom: 20px;
+                }
+            
+                .container .body {
+                    display: flex;
+                    justify-content: start;
+                }
         
-            .container {
-                width: 80%;
-            }
-        
-            .container .title {
-                margin-bottom: 20px;
-            }
-        
-            .container .body {
-                display: flex;
-                justify-content: start;
-            }
-        
-            .container .horizontal-bar {
-                height: 50vh;
-                width: 10px;
-                border-radius: 5px;
-                background: linear-gradient(180deg, rgba(12, 1, 199, 1) 0%, rgba(21, 21, 211, 1) 26%, rgba(0, 212, 255, 1)100%);
-                margin-right: 30px;
-            }
-        
-            .container .thank-you-msg {
-                margin-top: 40px;
-            }
-        
-            .container .footer {
-                width: 100%;
-                min-width: 350px;
-                background: linear-gradient(90deg, rgba(23, 12, 214, 1) 0%, rgba(78, 153, 226, 1) 26%, rgba(255, 255, 255, 1) 54%);
-                padding-left: 30px;
-                margin-top: 70px;
-            }
-        
-            .container .footer img {
-                height: 100px;
-            }
-        </style>
+                .email-body {
+                    padding: 10px 0px 10px 50px;
+                    border-left: 8px solid rgba(23, 12, 214, 1);
+                }       
+            
+                .container .thank-you-msg {
+                    margin-top: 40px;
+                }
+            
+                .container .footer {
+                    width: 100%;
+                    min-width: 350px;
+                    background: linear-gradient(90deg, rgba(23, 12, 214, 1) 0%, rgba(78, 153, 226, 1) 26%, rgba(255, 255, 255, 1) 54%);
+                    padding-left: 30px;
+                    margin-top: 70px;
+                }
+            
+                .container .footer img {
+                    height: 100px;
+                }
+            </style>
         </head>
         
         <body>
@@ -158,13 +154,14 @@ exports.enquiryResponseMail = (receiverEmail, subject, userName, body) => {
                     <h1>Response to your Enquiry</h1>
                 </div>
                 <div class="body">
-                    <div class="horizontal-bar"></div>
                     <div>
-                        <h2>Hi ${userName},</h2>
-                        <h3>
-                            ${body}
-                        </h3>
-                        <h3 class="thank-you-msg">Thank you</h3>
+                        <div class="email-body">
+                            <h2>Hi ${userName},</h2>
+                            <h3>
+                                ${body}
+                            </h3>
+                            <h3 class="thank-you-msg">Best regards,<br/>Health Horizon and Teams</h3>
+                        </div>
                         <div class="footer">
                             <img src="https://res.cloudinary.com/drijxiov2/image/upload/v1677932558/Logo_tqsoyu.png" alt="logo">
                         </div>
@@ -172,6 +169,119 @@ exports.enquiryResponseMail = (receiverEmail, subject, userName, body) => {
                 </div>
             </div>
         </body>
+        </html>`
+    })
+}
+
+exports.doctorWelcomeMail = (receiverEmail, subject, userName, body) => {
+    return ({
+        from: process.env.MAILER_EMAIL, // sender address
+        to: receiverEmail, // list of receivers
+        subject: subject, // Subject line
+        html: `<!DOCTYPE html>
+        <html lang="en">
+        
+        <head>
+            <meta charset="UTF-8">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <style>
+                body {
+                    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                }
+        
+                .container {
+                    width: 80%;
+                }
+        
+                .container .title {
+                    margin-bottom: 20px;
+                }
+        
+                .container .body {
+                    display: flex;
+                    justify-content: start;
+                }
+        
+                .email-body {
+                    padding: 10px 0px 10px 50px;
+                    border-left: 8px solid rgba(23, 12, 214, 1),;
+                }
+        
+                .container .thank-you-msg {
+                    margin-top: 40px;
+                }
+        
+                .container .footer {
+                    width: 100%;
+                    background: linear-gradient(90deg, rgba(23, 12, 214, 1) 0%, rgba(78, 153, 226, 1) 26%, rgba(255, 255, 255, 1) 54%);
+                    padding-left: 30px;
+                    margin-top: 70px;
+                }
+        
+                .container .footer img {
+                    height: 100px;
+                }
+        
+                .text-blue {
+                    color: rgb(12 1 199);
+                }
+            </style>
+        </head>
+        
+        <body>
+            <div class="container">
+                <div class="title">
+                    <h1>${subject}</h1>
+                </div>
+                <div class="body">
+                    <div>
+                        <div class="email-body">
+                            <h2>Dear Dr. ${userName},</h2>
+                            <h3>
+                                I am pleased to welcome you to our team of healthcare providers at <span class="text-blue">
+                                    Health
+                                    Horizon</span>. We are thrilled
+                                that you have joined us as a doctor, and we look forward to collaborating with you to deliver
+                                high-quality care to our patients.<br /><br />
+        
+                                As a doctor on our platform, you will have access to a variety of tools and resources that will
+                                help
+                                you provide exceptional care to your patients. Our website is designed to make it easy for
+                                patients
+                                to connect with you and to schedule appointments at their convenience. We are committed to
+                                providing
+                                a seamless and user-friendly experience for both you and your patients.<br /><br />
+        
+                                We value your expertise and dedication to your patients, and we are excited to work with you to
+                                improve healthcare outcomes. If you have any questions or concerns, please don't hesitate to
+                                reach
+                                out to us. We are here to support you every step of the way.<br /><br />
+        
+                                Once again, welcome to our team, and thank you for choosing <span class="text-blue">Health
+                                    Horizon</span> as your platform for
+                                delivering care.<br /><br />
+        
+                                Here is your login credentials,<br />
+                                Email : <span class="text-blue">${body?.email}</span><br />
+                                Password : <span class="text-blue">${body?.password}</span><br /><br />
+        
+                                Best regards,<br /><br />
+        
+                                Health Horizon and Teams
+                            </h3>
+                        </div>
+                        <div class="footer">
+                            <img src="https://res.cloudinary.com/drijxiov2/image/upload/v1677932558/Logo_tqsoyu.png" alt="logo">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </body>
+        
         </html>`
     })
 }

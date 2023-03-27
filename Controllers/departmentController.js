@@ -1,4 +1,5 @@
 const Department = require('../Models/Department/departmentModel.js');
+const Doctor = require('../Models/Doctor/doctorModel.js');
 const { addDepartmentSchema } = require('../Helpers/validator.js');
 
 exports.addDepartment = async (req, res, next) => {
@@ -46,6 +47,26 @@ exports.fetchDepartments = async (req, res) => {
         res.status(401).json({
             status: false,
             message: "Something went wrong, Please try again latter...!"
+        })
+    }
+}
+
+exports.fetchDepartmentById = async (req, res) => {
+    try {
+        let doctors = await Doctor.find({ department: req.params.id });
+        await Department.findById(req.params.id)
+            .then((result) => {
+                return (
+                    res.status(200).json({
+                        status: true,
+                        data: { ...result, doctors: doctors }
+                    })
+                )
+            })
+    } catch (error) {
+        return res.status(400).json({
+            status: false,
+            message: "Department's information does exist...!"
         })
     }
 }

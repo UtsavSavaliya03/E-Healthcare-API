@@ -1,4 +1,5 @@
 const Hospital = require('../Models/Hospital/hospitalModel.js');
+const Doctor = require('../Models/Doctor/doctorModel.js');
 const { addHospitalSchema, searchHospitalSchema } = require('../Helpers/validator.js');
 
 exports.addHospital = async (req, res, next) => {
@@ -54,13 +55,33 @@ exports.fetchHospitals = async (req, res) => {
     }
 }
 
+exports.fetchHospitalById = async (req, res) => {
+    try {
+        let doctors = await Doctor.find({ hospital: req.params.id });
+        await Hospital.findById(req.params.id)
+            .then((result) => {
+                return (
+                    res.status(200).json({
+                        status: true,
+                        data: { ...result, doctors: doctors }
+                    })
+                )
+            })
+    } catch (error) {
+        return res.status(400).json({
+            status: false,
+            message: "Hospital's information does exist...!"
+        })
+    }
+}
+
 exports.searchHospitals = async (req, res) => {
     try {
         const validateResult = await searchHospitalSchema.validateAsync(req.body);
 
         var regexHopital = new RegExp(validateResult.hospital, 'i');
 
-        hospitalsDetails = await Hospital.find({$or: [{name : regexHopital}, {'state.name': validateResult?.state?.name}, {'city.name': validateResult?.city?.name}]}).sort({ createdAt: -1 })
+        hospitalsDetails = await Hospital.find({ $and: [{ name: regexHopital }, { 'state.name': validateResult?.state?.name }, { 'city.name': validateResult?.city?.name }] }).sort({ createdAt: -1 })
         res.status(200).json({
             status: true,
             hospital: hospitalsDetails

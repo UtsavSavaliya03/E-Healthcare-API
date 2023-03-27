@@ -1,18 +1,32 @@
 const Doctor = require("../Models/Doctor/doctorModel.js")
-const { addDoctorSchema } = require("../Helpers/validator.js");
+const User = require("../Models/User/userModel.js")
+const { addDoctorSchema, searchDoctorSchema } = require("../Helpers/validator.js");
+const nodeMailer = require('../Services/NodeMailer.js');
+const CloudinaryService = require('../Services/CloudinaryServices.js');
+const generatePassword = require('../Services/GeneratePassword.js');
+const bcrypt = require('bcrypt');
 
 exports.addDoctor = async (req, res, next) => {
     try {
         const validateResult = await addDoctorSchema.validateAsync(req.body);
 
         const isDoctorExist = await Doctor.findOne({ email: validateResult?.email })
+        const isUserExist = await User.findOne({ email: validateResult?.email })
 
-        if (isDoctorExist !== null) {
+        if (isDoctorExist !== null || isUserExist !== null) {
             return res.status(400).json({
                 status: false,
                 message: "Doctor already exist, try with another email address...!"
             })
         } else {
+
+            let profileImg;
+            if (req?.files !== null) {
+                profileImg = await CloudinaryService(req?.files?.image);
+            }
+            let password = await generatePassword();
+            let encryptedPassword = await bcrypt.hash(password, 10);
+
             const doctor = await Doctor.create({
                 fName: validateResult?.fName,
                 lName: validateResult?.lName,
@@ -26,11 +40,18 @@ exports.addDoctor = async (req, res, next) => {
                 department: validateResult?.department,
                 hospital: validateResult?.hospital,
                 addressLine: validateResult?.addressLine,
-                city: validateResult?.city,
-                state: validateResult?.state,
+                country: JSON.parse(validateResult?.country),
+                state: JSON.parse(validateResult?.state),
+                city: JSON.parse(validateResult?.city),
+                password: encryptedPassword,
                 pincode: validateResult?.pincode,
-                country: validateResult?.country,
+                profileImg: profileImg?.url
             })
+
+            const name = doctor?.fName + ' ' + doctor?.lName;
+            const header = `New Beginnings: Welcome ${name} to Health Horizon!`;
+            nodeMailer('WelcomeDoctor', doctor?.email, header, name, { email: doctor?.email, password: password });
+
             res.status(201).json({
                 status: true,
                 message: "Doctor added successfully...!",
@@ -80,59 +101,35 @@ exports.fetchDoctors = async (req, res) => {
             message: "Something went wrong, Please try again latter...!"
         })
     }
-
-    // try {
-    //     const size = (parseInt(req.query.size || 10)) * (parseInt(req.query.page || 1));
-    //     const skipRecord = (parseInt(req.query.size || 10)) * (parseInt(req.query.page || 1) - 1);
-
-    //     const allGst = await Gst.find();
-
-    //     await Gst.find().skip(skipRecord).limit(size)
-    //         .then((results) => {
-    //             res.status(200).json({
-    //                 gst: results,
-    //                 total_page: Math.ceil(allGst.length / parseInt(req.query.size || 10))
-    //             });
-    //         }).catch((error) => {
-    //             res.status(401).json({
-    //                 status: false,
-    //                 message: "Something went wrong, Please try again latter...!"
-    //             })
-    //         })
-    // } catch (error) {
-    //     console.log('Error, while fetching all gst: ', error);
-    //     return (
-    //         res.status(401).json({
-    //             status: false,
-    //             message: "Something went wrong, Please try again latter...!"
-    //         })
-    //     )
-    // }
 }
 
-exports.searchDoctor = async (res, req) => {
-    // try {
-    //     const size = (parseInt(req.query.size || 10)) * (parseInt(req.query.page || 1));
-    //     const skipRecord = (parseInt(req.query.size || 10)) * (parseInt(req.query.page || 1) - 1);
+exports.searchDoctor = async (req, res) => {
+    try {
+        const validateResult = await searchDoctorSchema.validateAsync(req.body);
 
-    //     var regexGstin = new RegExp(req.params.gstin, 'i');
+        if (validateResult?.department) {
+            var regexName = new RegExp(validateResult?.name === null ? '' : validateResult?.name, 'i');
+            var serarchQuery = { $and: [{ $or: [{ fName: regexName }, { lName: regexName }] }, { department: validateResult?.department }] }
+        } else {
+            var regexName = new RegExp(validateResult?.name, 'i');
+            var serarchQuery = { $or: [{ fName: regexName }, { lName: regexName }] }
+        }
 
-    //     const allGst = await Gst.find({$or: [{ gstin: regexGstin }, { 'gstData.lgnm': regexGstin }]});
-    //     const response = await Gst.find({$or: [{ gstin: regexGstin }, { 'gstData.lgnm': regexGstin }]}).skip(skipRecord).limit(size);
+        const response = await Doctor.find(serarchQuery).sort({ createdAt: -1 }).populate('hospital department');
 
-    //     res.status(200).json({
-    //         gst: response,
-    //         total_page: Math.ceil(allGst.length / parseInt(req.query.size || 10))
-    //     });
-    // } catch (error) {
-    //     console.log('Error, while searching gst: ', error);
-    //     return (
-    //         res.status(401).json({
-    //             status: false,
-    //             message: "Something went wrong, Please try again latter...!"
-    //         })
-    //     )
-    // }
+        res.status(200).json({
+            status: true,
+            data: response,
+        });
+    } catch (error) {
+        console.log('Error, while searching doctors: ', error);
+        return (
+            res.status(401).json({
+                status: false,
+                message: "Something went wrong, Please try again latter...!"
+            })
+        )
+    }
 }
 
 exports.deleteDoctor = async (req, res) => {
@@ -149,34 +146,87 @@ exports.deleteDoctor = async (req, res) => {
     } catch (error) {
         return res.status(400).json({
             status: false,
-            message: "Doctor's information does exist...!"
+            message: "Doctor's information does not exist...!"
         })
     }
 }
 
 exports.updateDoctor = async (req, res) => {
     try {
-        const _id = req.params.id;
+        if (req?.files !== null) {
+            let profileImg = await CloudinaryService(req?.files?.image);
 
-        data = await Doctor.findOne({ _id })
-
-        await Doctor.findByIdAndUpdate({ _id }, req.body, { new: true }).populate('hospital department')
-            .then((result) => {
-                return (
-                    res.status(200).json({
-                        status: true,
-                        message: "Doctor's Information Updated Successfully...!",
-                        data: result
-                    })
-                )
-            })
-
-
-
+            await Doctor.findByIdAndUpdate(req.params.id,
+                {
+                    $set: {
+                        fName: req.body?.fName,
+                        lName: req.body?.lName,
+                        dateOfBirth: req.body?.dateOfBirth,
+                        email: req.body?.email,
+                        mobileNo: req.body?.mobileNo,
+                        bloodGroup: req.body?.bloodGroup,
+                        gender: req.body?.gender,
+                        shortBio: req.body?.shortBio,
+                        experience: req.body?.experience,
+                        department: req.body?.department,
+                        hospital: req.body?.hospital,
+                        addressLine: req.body?.addressLine,
+                        country: JSON.parse(req.body?.country),
+                        state: JSON.parse(req.body?.state),
+                        city: JSON.parse(req.body?.city),
+                        pincode: req.body?.pincode,
+                        profileImg: profileImg?.url
+                    }
+                },
+                { new: true }).populate('hospital department')
+                .then((result) => {
+                    return (
+                        res.status(200).json({
+                            status: true,
+                            message: "Doctor's Information Updated Successfully...!",
+                            data: result
+                        })
+                    )
+                })
+        } else {
+            await Doctor.findByIdAndUpdate(req.params.id,
+                {
+                    $set: {
+                        profileImg: null,
+                        fName: req.body?.fName,
+                        lName: req.body?.lName,
+                        dateOfBirth: req.body?.dateOfBirth,
+                        email: req.body?.email,
+                        mobileNo: req.body?.mobileNo,
+                        bloodGroup: req.body?.bloodGroup,
+                        gender: req.body?.gender,
+                        shortBio: req.body?.shortBio,
+                        experience: req.body?.experience,
+                        department: req.body?.department,
+                        hospital: req.body?.hospital,
+                        addressLine: req.body?.addressLine,
+                        country: JSON.parse(req.body?.country),
+                        state: JSON.parse(req.body?.state),
+                        city: JSON.parse(req.body?.city),
+                        pincode: req.body?.pincode,
+                    }
+                },
+                { new: true }).populate('hospital department')
+                .then((result) => {
+                    return (
+                        res.status(200).json({
+                            status: true,
+                            message: "Doctor's Information Updated Successfully...!",
+                            data: result
+                        })
+                    )
+                })
+        }
     } catch (error) {
+        console.log(error)
         return res.status(400).json({
             status: false,
-            message: "Doctor's Information Does exist...!"
+            message: "Doctor's Information Does not exist...!"
         })
     }
 }
