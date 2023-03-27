@@ -6,6 +6,7 @@ const auth = require('../../Middleware/auth.js');
 router.post('/', auth, hospitalController.addHospital);
 router.get('/', auth, hospitalController.fetchHospitals);
 router.post('/search', auth, hospitalController.searchHospitals);
+router.get('/:id', auth, hospitalController.fetchHospitalById);
 
 
 module.exports = router;

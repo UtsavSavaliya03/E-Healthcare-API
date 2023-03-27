@@ -70,6 +70,13 @@ const doctorSchema = new mongoose.Schema({
         type: Object,
         required: true
     },
+    profileImg: {
+        type: String
+    },
+    password: {
+        type: String,
+        required: [true, "Please fill your password"],
+    },
     token: {
         type: String,
     },

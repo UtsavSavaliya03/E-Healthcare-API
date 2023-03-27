@@ -151,8 +151,9 @@ exports.signup = async (req, res, next) => {
         const validateResult = await signupSchema.validateAsync(req.body);
 
         const isUserExist = await User.findOne({ email: validateResult?.email });
+        const isDoctorExist = await Doctor.findOne({ email: validateResult?.email });
 
-        if (isUserExist !== null) {
+        if (isUserExist !== null || isDoctorExist !== null) {
             return res.status(400).json({
                 status: false,
                 message: "User already exist...!"
@@ -166,6 +167,7 @@ exports.signup = async (req, res, next) => {
                 lName: validateResult?.lName,
                 email: validateResult?.email,
                 mobileNo: validateResult?.mobileNo,
+                profileImg: profileImg,
                 password: encryptedPassword,
             });
 
@@ -188,30 +190,23 @@ exports.signup = async (req, res, next) => {
 
 exports.findUser = async (req, res, next) => {
     try {
-        await User.findById(req.params.id, { password: 0 })
-            .then((result) => {
-                if (result !== null) {
-                    return (
-                        res.status(200).json({
-                            status: true,
-                            data: result
-                        })
-                    )
-                } else {
-                    return (
-                        res.status(401).json({
-                            status: false,
-                            message: "Invalid user id"
-                        })
-                    )
-                }
-            }).catch((error) => {
-                console.log('Error while fetching user:', error);
+        const user = await User.findById(req.params.id, { password: 0, status: 0 });
+        const doctor = await Doctor.findById(req.params.id, { password: 0, status: 0 });
+        if (user !== null || doctor !== null) {
+            return (
+                res.status(200).json({
+                    status: true,
+                    data: user || doctor
+                })
+            )
+        } else {
+            return (
                 res.status(401).json({
                     status: false,
-                    message: "Something went wrong, Please try again latter...!"
+                    message: "Invalid user id"
                 })
-            })
+            )
+        }
     } catch (error) {
         console.log('Error while fetching user:', error);
         res.status(401).json({
@@ -226,63 +221,60 @@ exports.sendOtpForPassword = async (req, res, next) => {
 
         const validateResult = await sendOtpSchema.validateAsync(req.body);
 
-        await User.findOne({ email: validateResult.email })
-            .then(async (user) => {
-                if (user !== null) {
-                    return (
-                        await Otp.findOne({ userId: user?._id })
-                            .then(async (result) => {
-                                const otpCode = Math.floor(100000 + Math.random() * 900000);
-                                if (result !== null) {
-                                    await Otp.findByIdAndUpdate(result?._id, {
-                                        $set: {
-                                            otp: otpCode,
-                                            expiresIn: new Date().getTime() + (180 * 1000),  // Miliseconds(180 sec - 3 min)
-                                            status: true
-                                        }
-                                    })
-                                } else {
-                                    const otp = await Otp.create({
-                                        userId: user._id,
-                                        otp: otpCode,
-                                        expiresIn: new Date().getTime() + (180 * 1000), // Miliseconds(180 sec - 3 min)
-                                        status: true
-                                    });
+        let user;
+
+        user = await User.findOne({ email: validateResult.email });
+        if (!(user)) {
+            user = await Doctor.findOne({ email: validateResult.email });
+        }
+
+        if (user !== null) {
+            return (
+                await Otp.findOne({ userId: user?._id })
+                    .then(async (result) => {
+                        const otpCode = Math.floor(100000 + Math.random() * 900000);
+                        if (result !== null) {
+                            await Otp.findByIdAndUpdate(result?._id, {
+                                $set: {
+                                    otp: otpCode,
+                                    expiresIn: new Date().getTime() + (180 * 1000),  // Miliseconds(180 sec - 3 min)
+                                    status: true
                                 }
-
-                                /* ---- Sending email to user ---- */
-                                const name = user.fName + ' ' + user.lName;
-                                const header = 'Password recovery email from Health Horizon';
-                                nodeMailer('PasswordRecovery', user.email, header, name, '',otpCode);
-
-                                return (
-                                    res.status(200).json({
-                                        status: true,
-                                        message: 'Otp is successfully send on ' + user.email,
-                                        data: {
-                                            userId: user._id,
-                                            email: user.email
-                                        },
-                                    })
-                                );
                             })
-                    );
-                } else {
-                    return (
-                        res.status(401).json({
-                            status: false,
-                            message: "User does not exist, please enter valid email address...!"
-                        })
-                    );
-                }
-            })
-            .catch((error) => {
-                console.log('Error sending otp for password recovery: ', error);
+                        } else {
+                            const otp = await Otp.create({
+                                userId: user._id,
+                                otp: otpCode,
+                                expiresIn: new Date().getTime() + (180 * 1000), // Miliseconds(180 sec - 3 min)
+                                status: true
+                            });
+                        }
+
+                        /* ---- Sending email to user ---- */
+                        const name = user.fName + ' ' + user.lName;
+                        const header = 'Password recovery email from Health Horizon';
+                        nodeMailer('PasswordRecovery', user.email, header, name, '', otpCode);
+
+                        return (
+                            res.status(200).json({
+                                status: true,
+                                message: 'Otp is successfully send on ' + user.email,
+                                data: {
+                                    userId: user._id,
+                                    email: user.email
+                                },
+                            })
+                        );
+                    })
+            );
+        } else {
+            return (
                 res.status(401).json({
                     status: false,
-                    message: "Something went wrong, Please try again latter...!"
+                    message: "User does not exist, please enter valid email address...!"
                 })
-            })
+            );
+        }
     } catch (error) {
         if (error.isJoi === true) {
             return res.status(422).json({
@@ -290,6 +282,11 @@ exports.sendOtpForPassword = async (req, res, next) => {
                 message: error?.details[0]?.message,
             });
         }
+        console.log('Error sending otp for password recovery: ', error);
+        res.status(401).json({
+            status: false,
+            message: "Something went wrong, Please try again latter...!"
+        })
         next(error);
     }
 }
@@ -323,6 +320,11 @@ exports.recoverPassword = async (req, res, next) => {
                             })
                         } else {
                             await User.findByIdAndUpdate(validateResult?.userId, {
+                                $set: {
+                                    password: hashPassword,
+                                }
+                            })
+                            await Doctor.findByIdAndUpdate(validateResult?.userId, {
                                 $set: {
                                     password: hashPassword,
                                 }

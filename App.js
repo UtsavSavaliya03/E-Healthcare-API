@@ -1,8 +1,9 @@
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const fileUpload = require('express-fileupload');
 const userRoutes = require('./Routes/User/userRouters.js');
-const enquiryRoutes = require('./Routes/Enquiry/enquiryRouters.js');
+const inquiryRoutes = require('./Routes/Inquiry/inquiryRouters.js');
 const doctorRoutes = require('./Routes/Doctor/doctorRouters.js');
 const departmentRoutes = require('./Routes/Department/departmentRouters.js');
 const hospitalRoutes = require('./Routes/Hospital/hospitalRouters.js');
@@ -24,12 +25,16 @@ App.use(bodyParser.urlencoded({
     extended: true
 }));
 
+App.use(fileUpload({
+    useTempFiles: true
+}))
+
 /* --------- Routes --------- */
 // Users
 App.use('/api/v1/users', userRoutes);
 
 // Contact
-App.use('/api/v1/enquiry', enquiryRoutes);
+App.use('/api/v1/inquiry', inquiryRoutes);
 
 // Doctor
 App.use('/api/v1/doctor', doctorRoutes);

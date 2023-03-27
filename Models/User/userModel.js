@@ -19,6 +19,24 @@ const userSchema = new mongoose.Schema({
         type: String,
         trim: true,
     },
+    profileImg: {
+        type: String
+    },
+    age: {
+        type: Number
+    },
+    country: {
+        type: Object,
+    },
+    state: {
+        type: Object,
+    },
+    city: {
+        type: Object,
+    },
+    pincode: {
+        type: Number,
+    },
     password: {
         type: String,
         required: [true, "Please fill your password"],

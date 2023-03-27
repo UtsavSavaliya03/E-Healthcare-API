@@ -12,11 +12,17 @@ function nodeMailer(type, userEmail, header, userName, body, otp) {
             pass: process.env.MAILER_EMAIL_PASS, // generated ethereal password
         },
     });
-    if (type == 'PasswordRecovery') {
-        var mailOptions = MailTemplets.passwordRecoveryMail(userEmail, header, userName, otp);
-    } else if (type == 'EnquiryResponse') {
-        var mailOptions = MailTemplets.enquiryResponseMail(userEmail, header, userName, body);
-    }
+    switch(type) {
+        case 'PasswordRecovery':
+            var mailOptions = MailTemplets.passwordRecoveryMail(userEmail, header, userName, otp);
+          break;
+        case 'InquiryResponse':
+            var mailOptions = MailTemplets.inquiryResponseMail(userEmail, header, userName, body);
+          break;
+        case 'WelcomeDoctor':
+            var mailOptions = MailTemplets.doctorWelcomeMail(userEmail, header, userName, body);
+          break;
+      }
     transporter.sendMail(mailOptions, function (error, info) {
         if (error) {
             console.log(error);
