@@ -4,6 +4,7 @@ const User = require("../Models/User/userModel.js");
 const Doctor = require("../Models/Doctor/doctorModel.js");
 const Otp = require("../Models/Otp/otpModel.js");
 const nodeMailer = require('../Services/NodeMailer.js');
+const generatePatientId = require('../Services/GeneratePatientId.js');
 const { authSchema, signupSchema, sendOtpSchema, recoverPasswordSchema } = require("../Helpers/validator.js");
 
 const createToken = (id) => {
@@ -81,6 +82,7 @@ exports.login = async (req, res, next) => {
         next(error);
     }
 };
+
 exports.doctorLogin = async (req, res, next) => {
     try {
 
@@ -159,10 +161,11 @@ exports.signup = async (req, res, next) => {
                 message: "User already exist...!"
             })
         } else {
-
             let encryptedPassword = await bcrypt.hash(validateResult?.password, 10);
+            let patientId = await generatePatientId();
 
             const user = await User.create({
+                patientId: patientId,
                 fName: validateResult?.fName,
                 lName: validateResult?.lName,
                 email: validateResult?.email,
@@ -190,7 +193,7 @@ exports.signup = async (req, res, next) => {
 exports.findUser = async (req, res, next) => {
     try {
         const user = await User.findById(req.params.id, { password: 0, status: 0 });
-        const doctor = await Doctor.findById(req.params.id, { password: 0, status: 0 });
+        const doctor = await Doctor.findById(req.params.id, { password: 0, status: 0 }).populate('hospital department');
         if (user !== null || doctor !== null) {
             return (
                 res.status(200).json({

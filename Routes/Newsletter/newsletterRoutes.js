@@ -4,4 +4,4 @@ const newsletterController = require("../../Controllers/newsletterController.js"
 
 router.post("/", newsletterController.subscribeNewsletter)
 
-module.exports = router
+module.exports = router;

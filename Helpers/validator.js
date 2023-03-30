@@ -60,10 +60,13 @@ const addDoctorSchema = Joi.object({
     image: Joi.allow(null),
 });
 
-
 const searchDoctorSchema = Joi.object({
     name: Joi.string().allow(null).trim().empty(''),
     department: Joi.string().allow(null).trim()
+})
+
+const searchDepartmentSchema = Joi.object({
+    name: Joi.string().trim().empty(''),
 })
 
 const addAppointmentSchema = Joi.object({
@@ -89,9 +92,9 @@ const addHospitalSchema = Joi.object({
 })
 
 const searchHospitalSchema = Joi.object({
-    name: Joi.string().trim(),
-    state: Joi.object(),
-    city: Joi.object(),
+    name: Joi.string().trim().empty(''),
+    state: Joi.string().allow(null),
+    city: Joi.string().allow(null),
 })
 
 const addDepartmentSchema = Joi.object({
@@ -100,6 +103,16 @@ const addDepartmentSchema = Joi.object({
     status: Joi.boolean().required(),
 })
 
+
+const backupDoctorsSchema = Joi.object({
+    dateTo: Joi.string().trim().empty(''),
+    dateFrom: Joi.string().trim().empty(''),
+})
+
+const backupPatientsSchema = Joi.object({
+    dateTo: Joi.string().trim().empty(''),
+    dateFrom: Joi.string().trim().empty(''),
+    
 const addPrescriptionSchema = Joi.object({
     patient: Joi.string().required(),
     doctor: Joi.string().required(),
@@ -123,5 +136,8 @@ module.exports = {
     addHospitalSchema,
     searchHospitalSchema,
     addDepartmentSchema,
+    searchDepartmentSchema,
+    backupDoctorsSchema,
+    backupPatientsSchema
     addPrescriptionSchema
 };

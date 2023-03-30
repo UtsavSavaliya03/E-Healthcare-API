@@ -79,12 +79,19 @@ exports.searchHospitals = async (req, res) => {
     try {
         const validateResult = await searchHospitalSchema.validateAsync(req.body);
 
-        var regexHopital = new RegExp(validateResult.hospital, 'i');
+        var regexHopital = new RegExp(validateResult.name, 'i');
 
-        hospitalsDetails = await Hospital.find({ $and: [{ name: regexHopital }, { 'state.name': validateResult?.state?.name }, { 'city.name': validateResult?.city?.name }] }).sort({ createdAt: -1 })
+        if (validateResult?.state && validateResult?.city === null) {
+            hospitalsDetails = await Hospital.find({ $and: [{ name: regexHopital }, { 'state.isoCode': validateResult?.state }] }).sort({ createdAt: -1 })
+        } else if (validateResult?.state && validateResult?.city) {
+            hospitalsDetails = await Hospital.find({ $and: [{ name: regexHopital }, { 'state.isoCode': validateResult?.state }, { 'city.name': validateResult?.city }] }).sort({ createdAt: -1 })
+        } else {
+            hospitalsDetails = await Hospital.find({ name: regexHopital }).sort({ createdAt: -1 })
+        }
+
         res.status(200).json({
             status: true,
-            hospital: hospitalsDetails
+            data: hospitalsDetails
         })
     } catch (error) {
         res.status(401).json({
