@@ -63,7 +63,7 @@ exports.fetchHospitalById = async (req, res) => {
                 return (
                     res.status(200).json({
                         status: true,
-                        data: { ...result, doctors: doctors }
+                        data: { hospital: result, doctors: doctors }
                     })
                 )
             })
