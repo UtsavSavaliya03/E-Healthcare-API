@@ -5,6 +5,7 @@ const auth = require('../../Middleware/auth.js');
 
 router.post("/", auth, appointmentControllers.addAppointment)
 router.get('/', auth, appointmentControllers.fetchAppointments);
+router.get('/:id', auth, appointmentControllers.fetchIndividualAppointments);
 router.delete('/:id', auth, appointmentControllers.deleteAppointment);
 router.put('/:id', auth, appointmentControllers.updateAppointment);
 
