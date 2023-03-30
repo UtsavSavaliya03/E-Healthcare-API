@@ -6,5 +6,7 @@ const auth = require('../../Middleware/auth.js');
 router.post('/', auth, departmentController.addDepartment);
 router.get('/', auth, departmentController.fetchDepartments);
 router.get('/:id', auth, departmentController.fetchDepartmentById);
+router.delete('/:id', auth, departmentController.deleteDepartment);
+router.post('/search', auth, departmentController.searchDepartment);
 
 module.exports = router;

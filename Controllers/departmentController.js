@@ -1,6 +1,6 @@
 const Department = require('../Models/Department/departmentModel.js');
 const Doctor = require('../Models/Doctor/doctorModel.js');
-const { addDepartmentSchema } = require('../Helpers/validator.js');
+const { addDepartmentSchema, searchDepartmentSchema } = require('../Helpers/validator.js');
 
 exports.addDepartment = async (req, res, next) => {
     try {
@@ -38,7 +38,7 @@ exports.addDepartment = async (req, res, next) => {
 
 exports.fetchDepartments = async (req, res) => {
     try {
-        departmentsDetails = await Department.find({status: true}).sort({ createdAt: -1 })
+        departmentsDetails = await Department.find({ status: true }).sort({ createdAt: -1 })
         res.status(200).json({
             status: true,
             department: departmentsDetails
@@ -67,6 +67,55 @@ exports.fetchDepartmentById = async (req, res) => {
         return res.status(400).json({
             status: false,
             message: "Department's information does exist...!"
+        })
+    }
+}
+
+exports.searchDepartment = async (req, res) => {
+    try {
+        const validateResult = await searchDepartmentSchema.validateAsync(req.body);
+
+        var regexName = new RegExp(validateResult?.name, 'i');
+
+        const response = await Department.find({ name: regexName }).sort({ createdAt: -1 });
+
+        res.status(200).json({
+            status: true,
+            data: response,
+        });
+    } catch (error) {
+        return res.status(400).json({
+            status: false,
+            message: "Something went wrong, Please try again latter...!"
+        })
+    }
+}
+
+exports.deleteDepartment = async (req, res) => {
+    try {
+        const _id = req.params.id;
+
+        await Department.findOne({ _id })
+
+        const doctor = await Doctor.find({ department: _id });
+
+        if (doctor?.length > 0) {
+            res.status(401).json({
+                status: false,
+                message: "Sorry, Some doctors are exist in this department...!",
+            })
+        } else {
+            await Doctor.findByIdAndDelete({ _id })
+            res.status(200).json({
+                status: true,
+                message: "Doctor's detail deleted successfully...!",
+            })
+        }
+
+    } catch (error) {
+        return res.status(400).json({
+            status: false,
+            message: "Doctor's information does not exist...!"
         })
     }
 }
