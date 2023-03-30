@@ -67,15 +67,11 @@ const searchDoctorSchema = Joi.object({
 })
 
 const addAppointmentSchema = Joi.object({
-    patientId: Joi.string().required(),
-    doctorId: Joi.string().required(),
-    fName: Joi.string().required(),
-    lName: Joi.string().required(),
-    email: Joi.string().email().required(),
-    mobileNo: Joi.string().required(),
+    patient: Joi.string().required(),
+    doctor: Joi.string().required(),
+    description: Joi.string(),
     appointmentDate: Joi.date().required(),
-    department: Joi.string().trim().required(),
-    problem: Joi.string().trim().required(),
+    appointmentTime: Joi.string().required()
 })
 
 const newsletterSchema = Joi.object({
@@ -104,6 +100,15 @@ const addDepartmentSchema = Joi.object({
     status: Joi.boolean().required(),
 })
 
+const addPrescriptionSchema = Joi.object({
+    patient: Joi.string().required(),
+    doctor: Joi.string().required(),
+    medicines: Joi.array().required(),
+    description: Joi.string().required(),
+    nextAppointmentDate: Joi.date().required(),
+    
+})
+
 module.exports = {
     authSchema,
     signupSchema,
@@ -117,5 +122,6 @@ module.exports = {
     newsletterSchema,
     addHospitalSchema,
     searchHospitalSchema,
-    addDepartmentSchema
+    addDepartmentSchema,
+    addPrescriptionSchema
 };

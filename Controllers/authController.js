@@ -167,7 +167,6 @@ exports.signup = async (req, res, next) => {
                 lName: validateResult?.lName,
                 email: validateResult?.email,
                 mobileNo: validateResult?.mobileNo,
-                profileImg: profileImg,
                 password: encryptedPassword,
             });
 

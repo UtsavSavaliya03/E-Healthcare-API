@@ -5,20 +5,16 @@ exports.addAppointment = async (req, res, next) => {
     try {
         const validateResult = await addAppointmentSchema.validateAsync(req.body);
         const appointment = await Appointment.create({
-            patientId: validateResult?.patientId,
-            doctorId: validateResult?.doctorId,
-            fName: validateResult?.fName,
-            lName: validateResult?.lName,
-            email: validateResult?.email,
-            mobileNo: validateResult?.mobileNo,
+            patient: validateResult?.patient,
+            doctor: validateResult?.doctor,
             appointmentDate: validateResult?.appointmentDate,
-            department: validateResult?.department,
-            problem: validateResult?.problem
+            appointmentTime: validateResult?.appointmentTime,
+            description: validateResult?.description
         })
 
         res.status(201).json({
             status: true,
-            message: "Your Appointment Requested Successfully...!",
+            message: "Your appointment requested successfully...!",
             data: appointment._id,
         });
 
@@ -56,7 +52,7 @@ exports.deleteAppointment = async (req, res) => {
         await Appointment.findByIdAndDelete({ _id })
         res.status(200).json({
             status: true,
-            message: "Appointment Canceled Successfully...!",
+            message: "Appointment canceled successfully...!",
         })
     } catch (error) {
         return res.status(400).json({
@@ -74,11 +70,40 @@ exports.updateAppointment = async (req, res) => {
 
         return res.status(200).json({
             status: true,
-            message: "Appointment's Information Updated Successfully...!"
+            message: "Appointment's information updated successfully...!"
         })
 
     } catch (error) {
         return res.status(400).json({
+            status: false,
+            message: "Something went wrong, Please try again latter...!"
+        })
+    }
+}
+
+exports.fetchIndividualAppointments = async (req, res) => {
+    try {
+        const _id = req.params.id
+
+        if ((patientAppointments = await Appointment.find({ patient: _id }).populate('doctor')).length !== 0) {
+
+            res.status(200).json({
+                status: true,
+                data: patientAppointments
+            })
+        } else {
+
+            doctorAppointments = await Appointment.find({ doctor: _id }).populate("patient")
+            res.status(200).json({
+                status: true,
+                data: doctorAppointments
+            })
+        }
+
+
+
+    } catch (error) {
+        res.status(401).json({
             status: false,
             message: "Something went wrong, Please try again latter...!"
         })

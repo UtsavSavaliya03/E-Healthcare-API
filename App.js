@@ -10,6 +10,7 @@ const hospitalRoutes = require('./Routes/Hospital/hospitalRouters.js');
 const patientRoutes = require('./Routes/Patient/patientRouters.js');
 const appointmentRoutes = require('./Routes/Appointment/appointmentRouters.js');
 const newsletterRoutes = require('./Routes/Newsletter/newsletterRoutes.js');
+const prescriptionRoutes = require('./Routes/Prescription/prescriptionRoutes.js');
 
 const DatabaseConnection = require('./Database/database.js');
 
@@ -53,6 +54,9 @@ App.use('/api/v1/appointment', appointmentRoutes);
 
 // Newsletter
 App.use('/api/v1/newsletter', newsletterRoutes);
+
+// Prescription
+App.use('/api/v1/prescription', prescriptionRoutes);
 
 App.use('/', (req, res) => {
     res.status(404).json({
