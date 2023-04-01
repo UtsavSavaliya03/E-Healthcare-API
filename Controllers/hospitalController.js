@@ -100,3 +100,32 @@ exports.searchHospitals = async (req, res) => {
         })
     }
 }
+
+exports.deleteHospital = async (req, res) => {
+    try {
+        const _id = req.params.id;
+
+        await Hospital.findOne({ _id })
+
+        const doctor = await Doctor.find({ hospital: _id });
+
+        if (doctor?.length > 0) {
+            res.status(401).json({
+                status: false,
+                message: "Sorry, Some doctors are exist in this hospital...!",
+            })
+        } else {
+            await Hospital.findByIdAndDelete({ _id })
+            res.status(200).json({
+                status: true,
+                message: "Hospital's detail deleted successfully...!",
+            })
+        }
+
+    } catch (error) {
+        return res.status(400).json({
+            status: false,
+            message: "Hospital's information does not exist...!"
+        })
+    }
+}

@@ -115,7 +115,7 @@ exports.searchDoctor = async (req, res) => {
             var serarchQuery = { $or: [{ fName: regexName }, { lName: regexName }] }
         }
 
-        const response = await Doctor.find(serarchQuery).sort({ createdAt: -1 }).populate('hospital department');
+        const response = await Doctor.find(serarchQuery).sort({ fName: 1, lName: 1 }).populate('hospital department');
 
         res.status(200).json({
             status: true,

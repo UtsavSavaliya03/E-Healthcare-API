@@ -7,6 +7,7 @@ router.post('/', auth, hospitalController.addHospital);
 router.get('/', auth, hospitalController.fetchHospitals);
 router.post('/search', auth, hospitalController.searchHospitals);
 router.get('/:id', auth, hospitalController.fetchHospitalById);
+router.delete('/:id', auth, hospitalController.deleteHospital);
 
 
 module.exports = router;
