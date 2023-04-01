@@ -14,7 +14,7 @@ exports.addDepartment = async (req, res, next) => {
                 message: "Department with this name is already exist, try with another name...!"
             })
         } else {
-            const hospital = await Department.create({
+            const department = await Department.create({
                 name: validateResult?.name,
                 description: validateResult?.description,
                 status: validateResult?.status,
@@ -22,7 +22,7 @@ exports.addDepartment = async (req, res, next) => {
             res.status(201).json({
                 status: true,
                 message: "Department added successfully...!",
-                data: hospital._id,
+                data: department._id,
             });
         }
     } catch (error) {
@@ -36,9 +36,24 @@ exports.addDepartment = async (req, res, next) => {
     }
 }
 
-exports.fetchDepartments = async (req, res) => {
+exports.fetchActiveDepartments = async (req, res) => {
     try {
         departmentsDetails = await Department.find({ status: true }).sort({ name: 1 })
+        res.status(200).json({
+            status: true,
+            department: departmentsDetails
+        })
+    } catch (error) {
+        res.status(401).json({
+            status: false,
+            message: "Something went wrong, Please try again latter...!"
+        })
+    }
+}
+
+exports.fetchDepartments = async (req, res) => {
+    try {
+        departmentsDetails = await Department.find().sort({ name: 1 })
         res.status(200).json({
             status: true,
             department: departmentsDetails
@@ -108,14 +123,14 @@ exports.deleteDepartment = async (req, res) => {
             await Department.findByIdAndDelete({ _id })
             res.status(200).json({
                 status: true,
-                message: "Doctor's detail deleted successfully...!",
+                message: "Department's detail deleted successfully...!",
             })
         }
 
     } catch (error) {
         return res.status(400).json({
             status: false,
-            message: "Doctor's information does not exist...!"
+            message: "Department's information does not exist...!"
         })
     }
 }

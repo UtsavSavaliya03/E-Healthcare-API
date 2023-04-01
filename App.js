@@ -56,7 +56,6 @@ App.use('/api/v1/appointment', appointmentRoutes);
 // Newsletter
 App.use('/api/v1/newsletter', newsletterRoutes);
 
-
 // Backup
 App.use('/api/v1/backup', backupRoutes);
 
