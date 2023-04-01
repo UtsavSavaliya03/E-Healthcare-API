@@ -90,7 +90,7 @@ exports.fetchDoctorById = async (req, res) => {
 
 exports.fetchDoctors = async (req, res) => {
     try {
-        doctorsDetails = await Doctor.find({}).sort({ createdAt: -1 }).populate('hospital department')
+        doctorsDetails = await Doctor.find({}).sort({ fName: 1, lName: 1 }).populate('hospital department')
         res.status(200).json({
             status: true,
             data: doctorsDetails

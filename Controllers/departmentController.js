@@ -38,7 +38,7 @@ exports.addDepartment = async (req, res, next) => {
 
 exports.fetchDepartments = async (req, res) => {
     try {
-        departmentsDetails = await Department.find({ status: true }).sort({ createdAt: -1 })
+        departmentsDetails = await Department.find({ status: true }).sort({ name: 1 })
         res.status(200).json({
             status: true,
             department: departmentsDetails
@@ -53,7 +53,7 @@ exports.fetchDepartments = async (req, res) => {
 
 exports.fetchDepartmentById = async (req, res) => {
     try {
-        let doctors = await Doctor.find({ department: req.params.id });
+        let doctors = await Doctor.find({ department: req.params.id }).sort({ fName: 1, lName: 1 });
         await Department.findById(req.params.id)
             .then((result) => {
                 return (
@@ -77,7 +77,7 @@ exports.searchDepartment = async (req, res) => {
 
         var regexName = new RegExp(validateResult?.name, 'i');
 
-        const response = await Department.find({ name: regexName }).sort({ createdAt: -1 });
+        const response = await Department.find({ name: regexName }).sort({ name: 1 });
 
         res.status(200).json({
             status: true,
@@ -105,7 +105,7 @@ exports.deleteDepartment = async (req, res) => {
                 message: "Sorry, Some doctors are exist in this department...!",
             })
         } else {
-            await Doctor.findByIdAndDelete({ _id })
+            await Department.findByIdAndDelete({ _id })
             res.status(200).json({
                 status: true,
                 message: "Doctor's detail deleted successfully...!",

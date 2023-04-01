@@ -112,6 +112,7 @@ const backupDoctorsSchema = Joi.object({
 const backupPatientsSchema = Joi.object({
     dateTo: Joi.string().trim().empty(''),
     dateFrom: Joi.string().trim().empty(''),
+})
     
 const addPrescriptionSchema = Joi.object({
     patient: Joi.string().required(),
@@ -138,6 +139,6 @@ module.exports = {
     addDepartmentSchema,
     searchDepartmentSchema,
     backupDoctorsSchema,
-    backupPatientsSchema
+    backupPatientsSchema,
     addPrescriptionSchema
 };

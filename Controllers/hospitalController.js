@@ -6,12 +6,12 @@ exports.addHospital = async (req, res, next) => {
     try {
         const validateResult = await addHospitalSchema.validateAsync(req.body);
 
-        const isHospitalExist = await Hospital.findOne({ email: validateResult?.email })
+        const isHospitalExist = await Hospital.findOne({ $or: [{ email: validateResult?.email }, { name: validateResult?.name }] })
 
         if (isHospitalExist !== null) {
             return res.status(400).json({
                 status: false,
-                message: "Hospital with this email address is already exist, try with another email address...!"
+                message: "Hospital with this name or email address is already exist, try with another email address...!"
             })
         } else {
             const hospital = await Hospital.create({
@@ -42,7 +42,7 @@ exports.addHospital = async (req, res, next) => {
 
 exports.fetchHospitals = async (req, res) => {
     try {
-        hospitalsDetails = await Hospital.find().sort({ createdAt: -1 })
+        hospitalsDetails = await Hospital.find().sort({ name: 1 })
         res.status(200).json({
             status: true,
             hospital: hospitalsDetails
@@ -57,7 +57,7 @@ exports.fetchHospitals = async (req, res) => {
 
 exports.fetchHospitalById = async (req, res) => {
     try {
-        let doctors = await Doctor.find({ hospital: req.params.id });
+        let doctors = await Doctor.find({ hospital: req.params.id }).sort({ fName: 1, lName: 1 });
         await Hospital.findById(req.params.id)
             .then((result) => {
                 return (
@@ -82,11 +82,11 @@ exports.searchHospitals = async (req, res) => {
         var regexHopital = new RegExp(validateResult.name, 'i');
 
         if (validateResult?.state && validateResult?.city === null) {
-            hospitalsDetails = await Hospital.find({ $and: [{ name: regexHopital }, { 'state.isoCode': validateResult?.state }] }).sort({ createdAt: -1 })
+            hospitalsDetails = await Hospital.find({ $and: [{ name: regexHopital }, { 'state.isoCode': validateResult?.state }] }).sort({ name: 1 })
         } else if (validateResult?.state && validateResult?.city) {
-            hospitalsDetails = await Hospital.find({ $and: [{ name: regexHopital }, { 'state.isoCode': validateResult?.state }, { 'city.name': validateResult?.city }] }).sort({ createdAt: -1 })
+            hospitalsDetails = await Hospital.find({ $and: [{ name: regexHopital }, { 'state.isoCode': validateResult?.state }, { 'city.name': validateResult?.city }] }).sort({ name: 1 })
         } else {
-            hospitalsDetails = await Hospital.find({ name: regexHopital }).sort({ createdAt: -1 })
+            hospitalsDetails = await Hospital.find({ name: regexHopital }).sort({ name: 1 })
         }
 
         res.status(200).json({
