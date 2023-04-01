@@ -7,4 +7,3 @@ router.get("/",auth,patientController.fetchPatients);
 router.get("/search/:patientId",auth,patientController.searchPatients);
 
 module.exports = router;
-

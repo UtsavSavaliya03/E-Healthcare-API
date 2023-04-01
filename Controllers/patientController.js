@@ -2,7 +2,7 @@ const User = require("../Models/User/userModel.js")
 
 exports.fetchPatients = async (req, res) => {
     try {
-        const patientsDetails = await User.find({ role: 2 })
+        const patientsDetails = await User.find({ role: 2 }).sort({ fName: 1, lName: 1 })
         res.status(200).json({
             status: true,
             data: patientsDetails
@@ -19,7 +19,7 @@ exports.fetchPatients = async (req, res) => {
 exports.searchPatients = async (req, res) => {
     try {
         var regexPatientId = new RegExp(req.params.patientId, 'i');
-        console.log(regexPatientId);
+
         const response = await User.find({ $and: [{ role: 2 }, { patientId: regexPatientId }] }).sort({ fName: 1, lName: 1 });
 
         res.status(200).json({
