@@ -19,7 +19,7 @@ async function generatePatientId() {
     async function validateId(id) {
         const user = await User.findOne({patientId: id});
 
-        if (user !== null) {
+        if (user !== null || id?.length != 8) {
             await validateId(await getId());
         } else {
             return id;

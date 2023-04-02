@@ -1,7 +1,7 @@
 async function generatePassword() {
     var pass = '';
     var laterStr = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-    var numberStr = '0123456789';
+    var numberStr = '123456789';
     var specialStr = '@#$%&';
 
     for (let i = 1; i <= 10; i++) {

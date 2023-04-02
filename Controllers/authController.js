@@ -173,6 +173,10 @@ exports.signup = async (req, res, next) => {
                 password: encryptedPassword,
             });
 
+            const name = user?.fName + ' ' + user?.lName;
+            const header = `New Beginnings: Welcome ${name} to Health Horizon!`;
+            nodeMailer('WelcomePatient', user?.email, header, name);
+
             res.status(201).json({
                 status: true,
                 message: "Signup successfully...!",
