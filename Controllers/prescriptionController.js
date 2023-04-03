@@ -1,16 +1,15 @@
 const { addPrescriptionSchema } = require("../Helpers/validator.js")
 const Prescription = require("../Models/Prescription/prescriptionModel.js")
 
-exports.addPrescription = async (req, res) => {
+exports.addPrescription = async (req, res, next) => {
     try {
         const validateResult = await addPrescriptionSchema.validateAsync(req.body);
         const prescription = await Prescription.create({
             patient: validateResult?.patient,
             doctor: validateResult?.doctor,
             medicines: validateResult?.medicines,
-            description: validateResult?.description,
-            nextAppointmentDate: validateResult?.nextAppointmentDate,
-
+            suggestion: validateResult?.suggestion,
+            nextVisitDate: validateResult?.nextVisitDate,
         })
 
         res.status(201).json({

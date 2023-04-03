@@ -83,7 +83,8 @@ exports.passwordRecoveryMail = (receiverEmail, subject, userName, otp) => {
                     Hey ${userName}, <br /><br />
                     You asked and we delivered, let's reset your password with the help of One Time Password.
                     Your OTP is <b>${otp}</b> which will be expire in next 03 minutes.<br /><br />
-                    Thank you.
+                    Thank you,<br/>
+                    HealthHorizon Team.
                 </div>
             </div>
         </body>

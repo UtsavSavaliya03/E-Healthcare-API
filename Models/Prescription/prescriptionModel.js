@@ -15,13 +15,11 @@ const prescriptionSchema = new mongoose.Schema({
     medicines: {
         type: Array
     },
-    description: {
+    suggestion: {
         type: String,
-        required: true
     },
-    nextAppointmentDate: {
+    nextVisitDate: {
         type: Date,
-        required: true
     }
 
 }, { timestamps: true })

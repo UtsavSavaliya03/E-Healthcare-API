@@ -104,12 +104,7 @@ const addDepartmentSchema = Joi.object({
 })
 
 
-const backupDoctorsSchema = Joi.object({
-    dateTo: Joi.string().trim().empty(''),
-    dateFrom: Joi.string().trim().empty(''),
-})
-
-const backupPatientsSchema = Joi.object({
+const backupSchema = Joi.object({
     dateTo: Joi.string().trim().empty(''),
     dateFrom: Joi.string().trim().empty(''),
 })
@@ -118,9 +113,8 @@ const addPrescriptionSchema = Joi.object({
     patient: Joi.string().required(),
     doctor: Joi.string().required(),
     medicines: Joi.array().required(),
-    description: Joi.string().required(),
-    nextAppointmentDate: Joi.date().required(),
-    
+    suggestion: Joi.string().required(),
+    nextVisitDate: Joi.date().required(),
 })
 
 module.exports = {
@@ -138,7 +132,6 @@ module.exports = {
     searchHospitalSchema,
     addDepartmentSchema,
     searchDepartmentSchema,
-    backupDoctorsSchema,
-    backupPatientsSchema,
+    backupSchema,
     addPrescriptionSchema
 };
