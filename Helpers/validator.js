@@ -61,7 +61,10 @@ const addDoctorSchema = Joi.object({
 });
 
 const searchDoctorSchema = Joi.object({
-    name: Joi.string().allow(null).trim().empty(''),
+    fName: Joi.string().trim().empty(''),
+    lName: Joi.string().trim().empty(''),
+    state: Joi.string().allow(null).trim(),
+    city: Joi.string().allow(null).trim(),
     department: Joi.string().allow(null).trim()
 })
 
@@ -113,8 +116,8 @@ const addPrescriptionSchema = Joi.object({
     patient: Joi.string().required(),
     doctor: Joi.string().required(),
     medicines: Joi.array().required(),
-    suggestion: Joi.string().required(),
-    nextVisitDate: Joi.date().required(),
+    suggestion: Joi.string().empty(''),
+    nextVisitDate: Joi.date().required().empty('').allow(null),
 })
 
 module.exports = {

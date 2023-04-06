@@ -29,6 +29,9 @@ const userSchema = new mongoose.Schema({
     age: {
         type: Number
     },
+    addressLine: {
+        type: String
+    },
     country: {
         type: Object,
     },

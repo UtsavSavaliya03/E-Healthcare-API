@@ -107,6 +107,17 @@ exports.searchDoctor = async (req, res) => {
     try {
         const validateResult = await searchDoctorSchema.validateAsync(req.body);
 
+        // let data = await Doctor.find();
+
+        // const filters = validateResult;
+        // const filteredUsers = data.filter(user => {
+        //     let isValid = true;
+        //     for (key in filters) {
+        //         isValid = isValid && user[key?.name] == filters[key];
+        //     }
+        //     return isValid;
+        // });
+
         if (validateResult?.department) {
             var regexName = new RegExp(validateResult?.name === null ? '' : validateResult?.name, 'i');
             var serarchQuery = { $and: [{ $or: [{ fName: regexName }, { lName: regexName }] }, { department: validateResult?.department }] }
@@ -123,6 +134,12 @@ exports.searchDoctor = async (req, res) => {
         });
     } catch (error) {
         console.log('Error, while searching doctors: ', error);
+        if (error.isJoi === true) {
+            return res.status(422).json({
+                status: false,
+                message: error?.details[0]?.message,
+            });
+        }
         return (
             res.status(401).json({
                 status: false,
