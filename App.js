@@ -12,6 +12,7 @@ const appointmentRoutes = require('./Routes/Appointment/appointmentRouters.js');
 const newsletterRoutes = require('./Routes/Newsletter/newsletterRoutes.js');
 const backupRoutes = require('./Routes/Backup/backupRouters.js');
 const prescriptionRoutes = require('./Routes/Prescription/prescriptionRoutes.js');
+const laboratoryRoutes = require('./Routes/Laboratory/laboratoryRouters.js');
 
 const DatabaseConnection = require('./Database/database.js');
 
@@ -61,6 +62,9 @@ App.use('/api/v1/backup', backupRoutes);
 
 // Prescription
 App.use('/api/v1/prescription', prescriptionRoutes);
+
+// Laboratory
+App.use('/api/v1/laboratory', laboratoryRoutes);
 
 
 App.use('/', (req, res) => {

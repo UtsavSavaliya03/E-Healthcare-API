@@ -371,3 +371,90 @@ exports.patientWelcomeMail = (receiverEmail, subject, userName) => {
         </html>`
     })
 }
+
+exports.newsletterMail = (receiverEmail, subject, userName, body) => {
+    return ({
+        from: process.env.MAILER_EMAIL, // sender address
+        to: receiverEmail, // list of receivers
+        subject: subject, // Subject line
+        html: `<!DOCTYPE html>
+        <html>
+          <head>
+            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+            <title>Exploring the Future of Healthcare</title>
+            <style>
+              body {
+                background-color: #f2f2f2;
+                font-family: Arial, sans-serif;
+              }
+              .container {
+                margin: 0 auto;
+              }
+              .header {
+                background: linear-gradient(
+                  90deg,
+                  rgb(13, 3, 213) 0%,
+                  rgb(12, 12, 195) 26%,
+                  rgba(0, 212, 255, 1) 100%
+                );
+                color: white;
+                padding: 20px;
+                text-align: center;
+              }
+              .content {
+                background: linear-gradient(to bottom right, #ffffff, #f2f2f2);
+                padding: 20px;
+                font-size: 18px;
+                line-height: 1.5;
+                color: #333333;
+                text-align: justify;
+              }
+              .footer {
+                background: linear-gradient(
+                  90deg,
+                  rgb(13, 3, 213) 0%,
+                  rgb(12, 12, 195) 26%,
+                  rgba(0, 212, 255, 1) 100%
+                );
+                color: #666666;
+                font-size: 16px;
+                text-align: center;
+                padding: 20px;
+              }
+            </style>
+          </head>
+          <body>
+            <div class="container">
+              <div class="header">
+                <div>
+                  <img
+                    style="width: 180px"
+                    src="https://res.cloudinary.com/drijxiov2/image/upload/v1677932558/Logo_tqsoyu.png"
+                    alt="Logo"
+                    class="logo"
+                  />
+                </div>
+                <h1>Exploring the Future of Healthcare</h1>
+              </div>
+              <div class="content">
+                <p>Dear HealthHorizon subscribers,</p>
+                <p>${body}</p>
+                <br />
+                <p>Stay healthy and safe,</p>
+                <p>HealthHorizon Team</p>
+              </div>
+        
+              <div class="footer">
+                <div style="color: white; font-weight: 600">
+                  <p>Thank you for your continued support and trust in HealthHorizon</p>
+                  <p>
+                    We will continue to provide you with the latest news, insights, and
+                    resources on the healthcare industry.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </body>
+        </html>`
+    })
+}

@@ -25,6 +25,9 @@ function nodeMailer(type, userEmail, header, userName, body, otp) {
         case 'WelcomePatient':
             var mailOptions = MailTemplets.patientWelcomeMail(userEmail, header, userName);
           break;
+        case 'Newsletter':
+            var mailOptions = MailTemplets.newsletterMail(userEmail, header, userName,body);
+          break;
       }
     transporter.sendMail(mailOptions, function (error, info) {
         if (error) {
