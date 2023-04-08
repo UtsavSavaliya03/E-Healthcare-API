@@ -71,8 +71,10 @@ const addDoctorSchema = Joi.object({
 });
 
 const searchDoctorSchema = Joi.object({
-  name: Joi.string().allow(null).trim().empty(""),
-  department: Joi.string().allow(null).trim(),
+  fName: Joi.string().trim().empty(""),
+  state: Joi.string().trim().empty(""),
+  city: Joi.string().trim().empty(""),
+  department: Joi.string().trim().empty(''),
 });
 
 const searchDepartmentSchema = Joi.object({

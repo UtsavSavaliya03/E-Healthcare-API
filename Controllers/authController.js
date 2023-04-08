@@ -53,10 +53,15 @@ exports.login = async (req, res, next) => {
                                     token: token,
                                     data: {
                                         _id: user._id,
+                                        patientId: user.patientId,
                                         fName: user.fName,
                                         lName: user.lName,
                                         email: user.email,
                                         mobileNo: user.mobileNo,
+                                        addressLine: user.addressLine,
+                                        state: user.state,
+                                        city: user.city,
+                                        pincode: user.pincode,
                                         role: user.role,
                                     }
                                 })
@@ -117,7 +122,6 @@ exports.doctorLogin = async (req, res, next) => {
                                     token: token,
                                     data: {
                                         _id: user._id,
-                                        patientId: user.patientId,
                                         fName: user.fName,
                                         lName: user.lName,
                                         email: user.email,
