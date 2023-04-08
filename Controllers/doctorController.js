@@ -107,30 +107,27 @@ exports.searchDoctor = async (req, res) => {
     try {
         const validateResult = await searchDoctorSchema.validateAsync(req.body);
 
-        // let data = await Doctor.find();
+        const doctors = await Doctor.find().sort({ fName: 1, lName: 1 }).populate('hospital department');
 
-        // const filters = validateResult;
-        // const filteredUsers = data.filter(user => {
-        //     let isValid = true;
-        //     for (key in filters) {
-        //         isValid = isValid && user[key?.name] == filters[key];
-        //     }
-        //     return isValid;
-        // });
-
-        if (validateResult?.department) {
-            var regexName = new RegExp(validateResult?.name === null ? '' : validateResult?.name, 'i');
-            var serarchQuery = { $and: [{ $or: [{ fName: regexName }, { lName: regexName }] }, { department: validateResult?.department }] }
-        } else {
-            var regexName = new RegExp(validateResult?.name, 'i');
-            var serarchQuery = { $or: [{ fName: regexName }, { lName: regexName }] }
-        }
-
-        const response = await Doctor.find(serarchQuery).sort({ fName: 1, lName: 1 }).populate('hospital department');
-
+        let filteredUsers = doctors.filter(user => {
+            let isValid = true;
+            for (key in validateResult) {
+                if (key == 'city') {
+                    isValid = isValid && user[key]?.name == validateResult[key];
+                } else if (key == 'state') {
+                    isValid = isValid && user[key].isoCode == validateResult[key];
+                } else if (key == 'department') {
+                    isValid = isValid && user[key]._id == validateResult[key];
+                } else {
+                    isValid = isValid && (user[key]).toString().includes(validateResult[key]);
+                }
+            }
+            return isValid;
+        });
+        
         res.status(200).json({
             status: true,
-            data: response,
+            data: filteredUsers,
         });
     } catch (error) {
         console.log('Error, while searching doctors: ', error);
