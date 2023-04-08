@@ -1,5 +1,11 @@
 const Laboratory = require("../Models/Laboratory/laboratoryModel.js");
-const { addLaboratorySchema } = require("../Helpers/validator.js");
+const {
+  addLaboratorySchema,
+  searchLaboratorySchema,
+} = require("../Helpers/validator.js");
+const generatePassword = require("../Services/GeneratePassword.js");
+const bcrypt = require("bcrypt");
+const nodeMailer = require("../Services/NodeMailer.js");
 
 exports.addLaboratory = async (req, res, next) => {
   try {
@@ -16,15 +22,25 @@ exports.addLaboratory = async (req, res, next) => {
           "Laboratory with this name or email address is already exist, try with another email address...!",
       });
     } else {
+      let password = await generatePassword();
+      let encryptedPassword = await bcrypt.hash(password, 10);
+
       const laboratory = await Laboratory.create({
         name: validateResult?.name,
         email: validateResult?.email,
+        password: encryptedPassword,
         mobileNo: validateResult?.mobileNo,
         shortBio: validateResult?.shortBio,
         addressLine: validateResult?.addressLine,
         city: validateResult?.city,
         state: validateResult?.state,
         pincode: validateResult?.pincode,
+      });
+      const name = validateResult?.name;
+      const header = `New Beginnings: Welcome ${name} to Health Horizon!`;
+      nodeMailer("WelcomeLaboratory", laboratory?.email, header, name, {
+        email: laboratory?.email,
+        password: password,
       });
       res.status(201).json({
         status: true,
@@ -82,7 +98,7 @@ exports.fetchLaboratoriesByPincode = async (req, res) => {
     const isLaboratoryExist = await Laboratory.findOne({ pincode });
 
     if (isLaboratoryExist !== null) {
-      const laboratoriesDetails = await Laboratory.findOne({ pincode });
+      const laboratoriesDetails = await Laboratory.find({ pincode });
       res.status(200).json({
         status: true,
         data: laboratoriesDetails,
@@ -146,6 +162,45 @@ exports.updateLaboratory = async (req, res) => {
     });
   } catch (error) {
     return res.status(400).json({
+      status: false,
+      message: "Something went wrong, Please try again latter...!",
+    });
+  }
+};
+
+exports.searchLaboratories = async (req, res) => {
+  try {
+    const validateResult = await searchLaboratorySchema.validateAsync(req.body);
+
+    var regexLaboratory = new RegExp(validateResult.name, "i");
+
+    if (validateResult?.state && validateResult?.city === null) {
+      laboratoriesDetails = await Laboratory.find({
+        $and: [
+          { name: regexLaboratory },
+          { "state.isoCode": validateResult?.state },
+        ],
+      }).sort({ name: 1 });
+    } else if (validateResult?.state && validateResult?.city) {
+      laboratoriesDetails = await Laboratory.find({
+        $and: [
+          { name: regexLaboratory },
+          { "state.isoCode": validateResult?.state },
+          { "city.name": validateResult?.city },
+        ],
+      }).sort({ name: 1 });
+    } else {
+      laboratoriesDetails = await Laboratory.find({
+        name: regexLaboratory,
+      }).sort({ name: 1 });
+    }
+
+    res.status(200).json({
+      status: true,
+      data: laboratoriesDetails,
+    });
+  } catch (error) {
+    res.status(401).json({
       status: false,
       message: "Something went wrong, Please try again latter...!",
     });

@@ -11,6 +11,10 @@ const laboratorySchema = new mongoose.Schema({
         unique: true,
         lowercase: true
     },
+    password: {
+        type: String,
+        required: [true, "Please fill your password"],
+    },
     mobileNo: {
         type: String,
         trim: true,

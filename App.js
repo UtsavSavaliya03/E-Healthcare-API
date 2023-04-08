@@ -13,6 +13,8 @@ const newsletterRoutes = require('./Routes/Newsletter/newsletterRoutes.js');
 const backupRoutes = require('./Routes/Backup/backupRouters.js');
 const prescriptionRoutes = require('./Routes/Prescription/prescriptionRoutes.js');
 const laboratoryRoutes = require('./Routes/Laboratory/laboratoryRouters.js');
+const testRequestRoutes = require('./Routes/TestRequest/testRouters.js');
+const testReportRoutes = require('./Routes/TestReport/testReportRouters.js');
 
 const DatabaseConnection = require('./Database/database.js');
 
@@ -65,6 +67,12 @@ App.use('/api/v1/prescription', prescriptionRoutes);
 
 // Laboratory
 App.use('/api/v1/laboratory', laboratoryRoutes);
+
+// TestRequest
+App.use('/api/v1/testRequest', testRequestRoutes);
+
+// TestReport
+App.use('/api/v1/testReport', testReportRoutes);
 
 
 App.use('/', (req, res) => {

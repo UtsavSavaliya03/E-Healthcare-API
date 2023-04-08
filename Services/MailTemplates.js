@@ -266,6 +266,109 @@ exports.doctorWelcomeMail = (receiverEmail, subject, userName, body) => {
         </html>`
     })
 }
+exports.laboratoryWelcomeMail = (receiverEmail, subject, userName, body) => {
+    return ({
+        from: process.env.MAILER_EMAIL, // sender address
+        to: receiverEmail, // list of receivers
+        subject: subject, // Subject line
+        html: `<!DOCTYPE html>
+        <html>
+        
+        <head>
+            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+            <title>Welcome to HealthHorizon!</title>
+            <style>
+                body {
+                    background-color: #f2f2f2;
+                    font-family: Arial, sans-serif;
+                }
+        
+                .container {
+                    margin: 0 auto;
+                }
+        
+                .header {
+                    background: linear-gradient(90deg, rgb(13, 3, 213) 0%, rgb(12, 12, 195) 26%, rgba(0, 212, 255, 1) 100%);
+                    color: white;
+                    padding: 20px;
+                    text-align: center;
+                }
+        
+                .content {
+                    background: linear-gradient(to bottom right, #ffffff, #f2f2f2);
+                    padding: 20px;
+                    font-size: 18px;
+                    line-height: 1.5;
+                    color: #333333;
+                    text-align: justify;
+                }
+        
+                .footer {
+                    background: linear-gradient(90deg, rgb(13, 3, 213) 0%, rgb(12, 12, 195) 26%, rgba(0, 212, 255, 1) 100%);
+                    color: #666666;
+                    font-size: 14px;
+                    text-align: center;
+                    padding: 20px;
+                }
+            </style>
+        </head>
+        
+        <body>
+            <div class="container">
+                <div class="header">
+                    <div>
+                        <img style="width: 180px"
+                            src="https://res.cloudinary.com/drijxiov2/image/upload/v1677932558/Logo_tqsoyu.png" alt="Logo"
+                            class="logo" />
+                    </div>
+                    <h1>Welcome to HealthHorizon!</h1>
+                </div>
+                <div class="content">
+                    <p>Dear ${userName},</p>
+                    <p>On behalf of HealthHorizon, I would like to extend a warm welcome to our network of healthcare providers!
+                        We are excited to have you as a part of our community of laboratories and are committed to supporting
+                        you in delivering the best possible care to our patients.</p>
+                    <p> As a registered laboratory with HealthHorizon, you now have access to a wide range of benefits,
+                        including:
+                    </p>
+                    <p> Increased visibility to patients seeking laboratory services in your area
+                        Streamlined electronic ordering and results delivery for faster turnaround times and reduced errors
+                        Secure and compliant electronic health record management for improved patient safety and care
+                        coordination
+                        A dedicated account manager who will provide personalized support and guidance to help you get the most
+                        out of our platform
+                        We understand that you may have questions about how to get started with HealthHorizon, and we are here
+                        to help. Your dedicated account manager will be in touch with you soon to provide more information on
+                        how to set up your account and begin using our platform.
+                    </p>
+                    <p>
+                        Thank you for choosing HealthHorizon as your partner in healthcare. We look forward to working with you!
+                    </p>
+                    <br>
+                    Here is your login credentials,<br />
+                    Email : <span class="text-blue">${body?.email}</span><br />
+                    Password : <span class="text-blue">${body?.password}</span><br /><br />
+                    </p>
+                    <br>
+                    <p>Thanks you,</p>
+                    <p>HealthHorizon Team</p>
+                </div>
+        
+                <div class="footer">
+                    <div style="color: white; font-weight: 600">
+                        <p>
+                            You received this email because you signed up for an account at
+                            HealthHorizon.
+                        </p>
+                        <p>If you did not create an account, please disregard this email.</p>
+                    </div>
+                </div>
+            </div>
+        </body>
+        
+        </html>`
+    })
+}
 
 exports.patientWelcomeMail = (receiverEmail, subject, userName) => {
     return ({
