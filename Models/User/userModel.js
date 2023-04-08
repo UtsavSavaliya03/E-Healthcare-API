@@ -32,9 +32,6 @@ const userSchema = new mongoose.Schema({
     addressLine: {
         type: String
     },
-    country: {
-        type: Object,
-    },
     state: {
         type: Object,
     },

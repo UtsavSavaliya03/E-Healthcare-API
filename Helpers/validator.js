@@ -143,6 +143,28 @@ const addLaboratorySchema = Joi.object({
   pincode: Joi.number().required()
 })
 
+const searchLaboratorySchema = Joi.object({
+  name: Joi.string().trim().empty(''),
+  state: Joi.string().allow(null),
+  city: Joi.string().allow(null),
+})
+
+const addTestRequestSchema = Joi.object({
+  patient: Joi.string().required(),
+  doctor: Joi.string().required(),
+  laboratory: Joi.string().required(),
+  type: Joi.string().required(),
+
+});
+const addTestReportSchema = Joi.object({
+  patient: Joi.string().required(),
+  doctor: Joi.string().required(),
+  laboratory: Joi.string().required(),
+  type: Joi.string().required(),
+  reportInformation: Joi.object().required(),
+
+});
+
 module.exports = {
     authSchema,
     signupSchema,
@@ -161,4 +183,7 @@ module.exports = {
     backupSchema,
     addPrescriptionSchema,
     addLaboratorySchema,
+    searchLaboratorySchema,
+    addTestRequestSchema,
+    addTestReportSchema
 };
