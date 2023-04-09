@@ -1,4 +1,6 @@
 const Laboratory = require("../Models/Laboratory/laboratoryModel.js");
+const Doctor = require("../Models/Doctor/doctorModel.js");
+const User = require("../Models/User/userModel.js");
 const {
   addLaboratorySchema,
   searchLaboratorySchema,
@@ -11,11 +13,14 @@ exports.addLaboratory = async (req, res, next) => {
   try {
     const validateResult = await addLaboratorySchema.validateAsync(req.body);
 
+    const isDoctorExist = await Doctor.findOne({ email: validateResult?.email });
+    const isUserExist = await User.findOne({ email: validateResult?.email });
     const isLaboratoryExist = await Laboratory.findOne({
       $or: [{ email: validateResult?.email }, { name: validateResult?.name }],
     });
 
-    if (isLaboratoryExist !== null) {
+
+    if (isDoctorExist !== null || isUserExist !== null || isLaboratoryExist !== null) {
       return res.status(400).json({
         status: false,
         message:

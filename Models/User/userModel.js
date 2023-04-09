@@ -47,7 +47,7 @@ const userSchema = new mongoose.Schema({
     },
     role: {
         type: Number,
-        default: 2,
+        default: 3,
     },
     token: {
         type: String

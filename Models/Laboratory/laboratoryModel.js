@@ -39,8 +39,11 @@ const laboratorySchema = new mongoose.Schema({
     pincode: {
         type: Number,
         required: true
-    }
-
+    },
+    role: {
+        type: Number,
+        default: 2
+    },
 },
     { timestamps: true }
 );
