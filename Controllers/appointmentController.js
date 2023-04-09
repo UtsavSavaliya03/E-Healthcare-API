@@ -30,7 +30,7 @@ exports.addAppointment = async (req, res, next) => {
 
 exports.fetchAppointments = async (req, res) => {
   try {
-    appointmentDetails = await Appointment.find({});
+    appointmentDetails = await Appointment.find({}).populate("patient","patientId fName lName age mobileNo" );
 
     res.status(200).json({
       status: true,
