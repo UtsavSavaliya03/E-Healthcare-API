@@ -2,6 +2,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const User = require("../Models/User/userModel.js");
 const Doctor = require("../Models/Doctor/doctorModel.js");
+const Laboratory = require("../Models/Laboratory/laboratoryModel.js");
 const Otp = require("../Models/Otp/otpModel.js");
 const nodeMailer = require("../Services/NodeMailer.js");
 const generatePatientId = require("../Services/GeneratePatientId.js");
@@ -26,134 +27,70 @@ const createToken = (id) => {
 
 exports.login = async (req, res, next) => {
   try {
+    let Modal;
+    if (req.params.type == 'laboratory') {
+      Modal = Laboratory;
+    } else if (req.params.type == 'doctor') {
+      Modal = Doctor;
+    } else {
+      Modal = User;
+    }
+
     // 1) validate email and password
     const validateResult = await authSchema.validateAsync(req.body);
 
-        await User.findOne({ email: validateResult?.email })
-            .exec()
-            .then((user) => {
-                if (user === null) {
-                    res.status(401).json({
-                        status: false,
-                        message: "User does not exist...!"
-                    })
-                } else {
-                    bcrypt.compare(validateResult?.password, user.password, async (err, result) => {
-                        if (!result) {
-                            return res.status(401).json({
-                                status: false,
-                                message: 'Password does not match...!'
-                            })
-                        } else {
-                            // Generate Token
-                            const token = createToken(user.id);
-
-                            await User.findOneAndUpdate({ email: user.email }, {
-                                $set: { token: token }
-                            }).then(async () => {
-                                res.status(200).json({
-                                    status: true,
-                                    message: "Login successfully...!",
-                                    token: token,
-                                    data: {
-                                        _id: user._id,
-                                        patientId: user.patientId,
-                                        fName: user.fName,
-                                        lName: user.lName,
-                                        email: user.email,
-                                        mobileNo: user.mobileNo,
-                                        role: user.role,
-                                        addressLine: user.addressLine,
-                                        state: user.state,
-                                        city: user.city,
-                                        pincode: user.pincode,
-                                    }
-                                })
-                            })
-                        }
-                    })
-                }
-            })
-            .catch((error) => {
-                console.log('Error while login:', error);
-                res.status(401).json({
-                    status: false,
-                    message: "Something went wrong, Please try again latter...!"
-                })
-            })
-    } catch (error) {
-        if (error.isJoi === true) {
-            return res.status(422).json({
+    await Modal.findOne({ email: validateResult?.email })
+      .exec()
+      .then((user) => {
+        if (user === null) {
+          res.status(401).json({
+            status: false,
+            message: "User does not exist...!"
+          })
+        } else {
+          bcrypt.compare(validateResult?.password, user.password, async (err, result) => {
+            if (!result) {
+              return res.status(401).json({
                 status: false,
-                message: error?.details[0]?.message,
-            });
-        }
-        next(error);
-    }
-};
+                message: 'Password does not match...!'
+              })
+            } else {
+              // Generate Token
+              user.password = undefined;
+              user.status = undefined;
 
-exports.doctorLogin = async (req, res, next) => {
-  try {
-    // 1) validate email and password
-    const validateResult = await authSchema.validateAsync(req.body);
+              const token = createToken(user.id);
 
-        await Doctor.findOne({ email: validateResult?.email })
-            .exec()
-            .then((user) => {
-                if (user === null) {
-                    res.status(401).json({
-                        status: false,
-                        message: "Doctor does not exist...!"
-                    })
-                } else {
-                    bcrypt.compare(validateResult?.password, user.password, async (err, result) => {
-                        if (!result) {
-                            return res.status(401).json({
-                                status: false,
-                                message: 'Password does not match...!'
-                            })
-                        } else {
-                            // Generate Token
-                            const token = createToken(user.id);
-
-                            await Doctor.findOneAndUpdate({ email: user.email }, {
-                                $set: { token: token }
-                            }).then(async () => {
-                                res.status(200).json({
-                                    status: true,
-                                    message: "Login successfully...!",
-                                    token: token,
-                                    data: {
-                                        _id: user._id,
-                                        patientId: user.patientId,
-                                        fName: user.fName,
-                                        lName: user.lName,
-                                        email: user.email,
-                                        mobileNo: user.mobileNo,
-                                        role: user.role,
-                                    }
-                                })
-                            })
-                        }
-                    })
-                }
-            })
-            .catch((error) => {
-                console.log('Error while login:', error);
-                res.status(401).json({
-                    status: false,
-                    message: "Something went wrong, Please try again latter...!"
+              await User.findOneAndUpdate({ email: user.email }, {
+                $set: { token: token }
+              }).then(async () => {
+                res.status(200).json({
+                  status: true,
+                  message: "Login successfully...!",
+                  token: token,
+                  data: user
                 })
-            })
-    } catch (error) {
-        if (error.isJoi === true) {
-            return res.status(422).json({
-                status: false,
-                message: error?.details[0]?.message,
-            });
+              })
+            }
+          })
         }
-        next(error);
+      })
+      .catch((error) => {
+        console.log('Error while login:', error);
+        res.status(401).json({
+          status: false,
+          message: "Something went wrong, Please try again latter...!"
+        })
+      })
+  } catch (error) {
+    if (error.isJoi === true) {
+      return res.status(422).json({
+        status: false,
+        message: error?.details[0]?.message,
+      });
     }
+    next(error);
+  }
 };
 
 exports.signup = async (req, res, next) => {
@@ -207,14 +144,13 @@ exports.signup = async (req, res, next) => {
 exports.findUser = async (req, res, next) => {
   try {
     const user = await User.findById(req.params.id, { password: 0, status: 0 });
-    const doctor = await Doctor.findById(req.params.id, {
-      password: 0,
-      status: 0,
-    }).populate("hospital department");
-    if (user !== null || doctor !== null) {
+    const doctor = await Doctor.findById(req.params.id, { password: 0, status: 0 }).populate("hospital department");
+    const laboratory = await Laboratory.findById(req.params.id, { password: 0, status: 0 });
+
+    if (user !== null || doctor !== null || laboratory !== null) {
       return res.status(200).json({
         status: true,
-        data: user || doctor,
+        data: user || doctor || laboratory,
       });
     } else {
       return res.status(401).json({
@@ -240,6 +176,9 @@ exports.sendOtpForPassword = async (req, res, next) => {
     user = await User.findOne({ email: validateResult.email });
     if (!user) {
       user = await Doctor.findOne({ email: validateResult.email });
+      if (!user) {
+        user = await Laboratory.findOne({ email: validateResult.email });
+      }
     }
 
     if (user !== null) {
@@ -263,7 +202,12 @@ exports.sendOtpForPassword = async (req, res, next) => {
         }
 
         /* ---- Sending email to user ---- */
-        const name = user.fName + " " + user.lName;
+        let name;
+        if (user.fName) {
+          name = user?.fName + " " + user?.lName;
+        } else {
+          name = user?.name
+        }
         const header = "Password recovery email from Health Horizon";
         nodeMailer("PasswordRecovery", user.email, header, name, "", otpCode);
 
@@ -330,6 +274,11 @@ exports.recoverPassword = async (req, res, next) => {
               },
             });
             await Doctor.findByIdAndUpdate(validateResult?.userId, {
+              $set: {
+                password: hashPassword,
+              },
+            });
+            await Laboratory.findByIdAndUpdate(validateResult?.userId, {
               $set: {
                 password: hashPassword,
               },
