@@ -8,6 +8,7 @@ router.get('/', auth, hospitalController.fetchHospitals);
 router.post('/search', auth, hospitalController.searchHospitals);
 router.get('/:id', auth, hospitalController.fetchHospitalById);
 router.delete('/:id', auth, hospitalController.deleteHospital);
+router.post('/update/:id', auth, hospitalController.updateHospital);
 
 
 module.exports = router;

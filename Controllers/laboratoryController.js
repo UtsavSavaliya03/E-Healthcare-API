@@ -96,6 +96,7 @@ exports.fetchLaboratoryById = async (req, res) => {
     });
   }
 };
+
 exports.fetchLaboratoriesByPincode = async (req, res) => {
   try {
     var pincode = req.params.pincode;
@@ -109,20 +110,7 @@ exports.fetchLaboratoriesByPincode = async (req, res) => {
         data: laboratoriesDetails,
       });
     } else {
-      const allPincodes = await Laboratory.find(
-        {},
-        { _id: 0, pincode: 1 }
-      ).sort({ pincode: 1 });
-      const availablePincodes = [];
-      allPincodes.map((pin) => {
-        return availablePincodes.push(pin.pincode);
-      });
-      const nearestPincode = availablePincodes.filter((availablePin) => {
-        return availablePin > pincode;
-      });
-      const laboratoriesDetails = await Laboratory.findOne({
-        pincode: nearestPincode[0],
-      });
+      const laboratoriesDetails = await Laboratory.find()
       res.status(200).json({
         status: true,
         data: laboratoriesDetails,
