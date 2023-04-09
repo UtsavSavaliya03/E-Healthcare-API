@@ -129,3 +129,37 @@ exports.deleteHospital = async (req, res) => {
         })
     }
 }
+
+exports.updateHospital = async (req, res) => {
+    try {
+
+        await Hospital.findByIdAndUpdate(req.params.id,
+            {
+                $set: {
+                    name: req.body?.name,
+                    email: req.body?.email,
+                    mobileNo: req.body?.mobileNo,
+                    shortBio: req.body?.shortBio,
+                    addressLine: req.body?.addressLine,
+                    state: req.body?.state,
+                    city: req.body?.city
+                }
+            },
+            { new: true })
+            .then((result) => {
+                return (
+                    res.status(200).json({
+                        status: true,
+                        message: "Hospital's Information Updated Successfully...!",
+                        data: result
+                    })
+                )
+            })
+    } catch (error) {
+        console.log(error)
+        return res.status(400).json({
+            status: false,
+            message: "Hospital's Information Does not exist...!"
+        })
+    }
+}
