@@ -10,6 +10,9 @@ cloudinary.config({
 })
 
 async function Cloudinary(file) {
+    if (!file) {
+        return null;
+    }
     return await cloudinary.uploader.upload(file?.tempFilePath, (error, result) => {
         if (error) {
             console.log('Error while uploading image in cloud: ', error);

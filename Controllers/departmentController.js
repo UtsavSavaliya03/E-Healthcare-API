@@ -1,6 +1,7 @@
 const Department = require('../Models/Department/departmentModel.js');
 const Doctor = require('../Models/Doctor/doctorModel.js');
-const { addDepartmentSchema, searchDepartmentSchema } = require('../Helpers/validator.js');
+const { addDepartmentSchema, searchDepartmentSchema, updateDepartmentSchema } = require('../Helpers/validator.js');
+const CloudinaryService = require('../Services/CloudinaryServices.js');
 
 exports.addDepartment = async (req, res, next) => {
     try {
@@ -14,10 +15,19 @@ exports.addDepartment = async (req, res, next) => {
                 message: "Department with this name is already exist, try with another name...!"
             })
         } else {
+
+            let profileImg;
+            if (req?.files !== null) {
+                profileImg = await CloudinaryService(req?.files?.profileImg);
+                backgroungImg = await CloudinaryService(req?.files?.backgroungImg);
+            }
+
             const department = await Department.create({
                 name: validateResult?.name,
                 description: validateResult?.description,
                 status: validateResult?.status,
+                profileImg: profileImg?.url,
+                backgroundImg: backgroungImg?.url
             })
             res.status(201).json({
                 status: true,
@@ -132,5 +142,43 @@ exports.deleteDepartment = async (req, res) => {
             status: false,
             message: "Department's information does not exist...!"
         })
+    }
+}
+
+exports.updateDepartment = async (req, res, next) => {
+    try {
+        const validateResult = await updateDepartmentSchema.validateAsync(req.body);
+
+        let profileImg = await CloudinaryService(req?.files?.profileImg);
+        let backgroundImg = await CloudinaryService(req?.files?.backgroundImg);
+        await Department.findByIdAndUpdate(req.params.id,
+            {
+                $set: {
+                    name: validateResult?.name,
+                    description: validateResult?.description,
+                    status: validateResult?.status,
+                    profileImg: validateResult?.removeProfile ? null : profileImg?.url,
+                    backgroundImg: validateResult?.removeBg ? null : backgroundImg?.url
+                }
+            },
+            { new: true })
+            .then((result) => {
+                return (
+                    res.status(200).json({
+                        status: true,
+                        message: "Department's Information Updated Successfully...!",
+                        data: result
+                    })
+                )
+            })
+    } catch (error) {
+        console.log(error)
+        if (error.isJoi === true) {
+            return res.status(422).json({
+                status: false,
+                message: error?.details[0]?.message,
+            });
+        }
+        next(error);
     }
 }

@@ -9,5 +9,6 @@ router.get('/', auth, departmentController.fetchDepartments);
 router.get('/:id', auth, departmentController.fetchDepartmentById);
 router.delete('/:id', auth, departmentController.deleteDepartment);
 router.post('/search', auth, departmentController.searchDepartment);
+router.post('/update/:id', auth, departmentController.updateDepartment);
 
 module.exports = router;

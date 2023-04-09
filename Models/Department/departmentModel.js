@@ -9,12 +9,17 @@ const departmentSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    profileImg: {
+        type: String,
+    },
+    backgroundImg: {
+        type: String,
+    },
     status: {
         type: Object,
         required: true,
         default: true
     }
-
 },
     { timestamps: true }
 );

@@ -90,7 +90,7 @@ exports.deleteTestRequest = async (req, res) => {
 
     return res.status(200).json({
       status: true,
-      message: "Report's information deleted successfully...!",
+      message: "Request's information deleted successfully...!",
     });
   } catch (error) {
     res.status(401).json({

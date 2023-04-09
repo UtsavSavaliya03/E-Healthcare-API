@@ -117,19 +117,31 @@ const addDepartmentSchema = Joi.object({
   name: Joi.string().trim().required(),
   description: Joi.string().trim().required(),
   status: Joi.boolean().required(),
+  profileImg: Joi.allow(null),
+  backgroundImg: Joi.allow(null),
+});
+
+const updateDepartmentSchema = Joi.object({
+  name: Joi.string().trim(),
+  description: Joi.string().trim(),
+  status: Joi.boolean(),
+  profileImg: Joi.allow(null),
+  backgroundImg: Joi.allow(null),
+  removeProfile: Joi.boolean(),
+  removeBg: Joi.boolean()
 });
 
 const backupSchema = Joi.object({
-    dateTo: Joi.string().trim().empty(''),
-    dateFrom: Joi.string().trim().empty(''),
+  dateTo: Joi.string().trim().empty(''),
+  dateFrom: Joi.string().trim().empty(''),
 })
-    
+
 const addPrescriptionSchema = Joi.object({
-    patient: Joi.string().required(),
-    doctor: Joi.string().required(),
-    medicines: Joi.array().required(),
-    suggestion: Joi.string().empty(''),
-    nextVisitDate: Joi.date().required().empty('').allow(null),
+  patient: Joi.string().required(),
+  doctor: Joi.string().required(),
+  medicines: Joi.array().required(),
+  suggestion: Joi.string().empty(''),
+  nextVisitDate: Joi.date().required().empty('').allow(null),
 })
 
 const addLaboratorySchema = Joi.object({
@@ -166,24 +178,25 @@ const addTestReportSchema = Joi.object({
 });
 
 module.exports = {
-    authSchema,
-    signupSchema,
-    sendOtpSchema,
-    recoverPasswordSchema,
-    inquirySchema,
-    replyInquirySchema,
-    addDoctorSchema,
-    searchDoctorSchema,
-    addAppointmentSchema,
-    newsletterSchema,
-    addHospitalSchema,
-    searchHospitalSchema,
-    addDepartmentSchema,
-    searchDepartmentSchema,
-    backupSchema,
-    addPrescriptionSchema,
-    addLaboratorySchema,
-    searchLaboratorySchema,
-    addTestRequestSchema,
-    addTestReportSchema
+  authSchema,
+  signupSchema,
+  sendOtpSchema,
+  recoverPasswordSchema,
+  inquirySchema,
+  replyInquirySchema,
+  addDoctorSchema,
+  searchDoctorSchema,
+  addAppointmentSchema,
+  newsletterSchema,
+  addHospitalSchema,
+  searchHospitalSchema,
+  addDepartmentSchema,
+  searchDepartmentSchema,
+  backupSchema,
+  addPrescriptionSchema,
+  addLaboratorySchema,
+  searchLaboratorySchema,
+  addTestRequestSchema,
+  addTestReportSchema,
+  updateDepartmentSchema
 };

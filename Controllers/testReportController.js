@@ -28,3 +28,42 @@ exports.addTestReport = async (req, res, next) => {
     }
   };
   
+  exports.fetchTestReportsByLaboratory = async (req, res) => {
+    try {
+      const _id = req.params.id;
+      reportDetails = await TestReport.find({ laboratory: _id })
+        .populate("patient", "fName lName patientId age addressLine mobileNo")
+        .populate("laboratory", "name mobileNo email addressLine city state")
+        .populate("doctor", "fName lName hospital email mobileNo ");
+  
+      res.status(200).json({
+        status: true,
+        data: reportDetails,
+      });
+    } catch (error) {
+      res.status(401).json({
+        status: false,
+        message: "Something went wrong, Please try again latter...!",
+      });
+    }
+  };
+  
+  exports.fetchTestReportsByUser = async (req, res) => {
+    try {
+      const _id = req.params.id;
+      reportDetails = await TestReport.find({ patient: _id })
+        .populate("patient", "fName lName patientId age addressLine mobileNo")
+        .populate("laboratory", "name mobileNo email addressLine city state")
+        .populate("doctor", "fName lName hospital email mobileNo ");
+  
+      res.status(200).json({
+        status: true,
+        data: reportDetails,
+      });
+    } catch (error) {
+      res.status(401).json({
+        status: false,
+        message: "Something went wrong, Please try again latter...!",
+      });
+    }
+  };
