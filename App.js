@@ -13,7 +13,7 @@ const newsletterRoutes = require('./Routes/Newsletter/newsletterRoutes.js');
 const backupRoutes = require('./Routes/Backup/backupRouters.js');
 const prescriptionRoutes = require('./Routes/Prescription/prescriptionRoutes.js');
 const laboratoryRoutes = require('./Routes/Laboratory/laboratoryRouters.js');
-const testRequestRoutes = require('./Routes/TestRequest/testRouters.js');
+const testRequestRoutes = require('./Routes/TestRequest/testRequestRouters.js');
 const testReportRoutes = require('./Routes/TestReport/testReportRouters.js');
 const servicesRoutes = require('./Routes/Service/serviceRouters.js');
 
