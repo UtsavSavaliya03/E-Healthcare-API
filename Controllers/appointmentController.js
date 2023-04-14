@@ -31,7 +31,7 @@ exports.addAppointment = async (req, res, next) => {
 
 exports.fetchAppointments = async (req, res) => {
   try {
-    appointmentDetails = await Appointment.find({}).populate("patient","patientId fName lName age mobileNo" );
+    appointmentDetails = await Appointment.find({}).populate("patient", "patientId fName lName age mobileNo");
 
     res.status(200).json({
       status: true,
@@ -111,7 +111,7 @@ exports.fetchIndividualAppointments = async (req, res) => {
           appointmentData: {
             appointmentDate: appointment?.appointmentDate,
             appointmentTime: appointment?.appointmentTime,
-            status:appointment?.status,
+            status: appointment?.status,
             _id: appointment?._id,
           },
         });
@@ -132,6 +132,26 @@ exports.fetchIndividualAppointments = async (req, res) => {
         data: doctorAppointments,
       });
     }
+  } catch (error) {
+    res.status(401).json({
+      status: false,
+      message: "Something went wrong, Please try again latter...!",
+    });
+  }
+};
+
+exports.fetchAppointmentssByStatus = async (req, res) => {
+  try {
+
+    appointmentDetails = await Appointment.find({ status: req.body.status, doctor: req.body.doctor }).populate(
+      "patient",
+      "fName lName email patientId age mobileNo addressLine"
+    );
+
+    res.status(200).json({
+      status: true,
+      data: appointmentDetails,
+    });
   } catch (error) {
     res.status(401).json({
       status: false,

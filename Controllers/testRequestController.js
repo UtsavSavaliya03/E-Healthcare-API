@@ -47,8 +47,7 @@ exports.fetchTestRequests = async (req, res) => {
 };
 exports.fetchTestRequestsByStatus = async (req, res) => {
   try {
-    const status = req.params.status;
-    reportDetails = await TestRequest.find({ status }).populate(
+    reportDetails = await TestRequest.find({ laboratory: req.body.laboratory, status: req.body.status }).populate(
       "patient",
       "fName lName email patientId age mobileNo addressLine"
     );
