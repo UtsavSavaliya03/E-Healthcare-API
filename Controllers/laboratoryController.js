@@ -27,6 +27,7 @@ exports.addLaboratory = async (req, res, next) => {
           "Laboratory with this name or email address is already exist, try with another email address...!",
       });
     } else {
+
       let password = await generatePassword();
       let encryptedPassword = await bcrypt.hash(password, 10);
 
@@ -41,12 +42,14 @@ exports.addLaboratory = async (req, res, next) => {
         state: validateResult?.state,
         pincode: validateResult?.pincode,
       });
+
       const name = validateResult?.name;
       const header = `New Beginnings: Welcome ${name} to Health Horizon!`;
       nodeMailer("WelcomeLaboratory", laboratory?.email, header, name, {
         email: laboratory?.email,
         password: password,
       });
+      
       res.status(201).json({
         status: true,
         message: "Laboratory added successfully...!",

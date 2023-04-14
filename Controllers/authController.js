@@ -39,7 +39,7 @@ exports.login = async (req, res, next) => {
     // 1) validate email and password
     const validateResult = await authSchema.validateAsync(req.body);
 
-    await Modal.findOne({ email: validateResult?.email })
+    await Modal.findOne({ email: validateResult?.email }).populate(req.params.type == 'doctor' ? "hospital department" : '')
       .exec()
       .then((user) => {
         if (user === null) {
