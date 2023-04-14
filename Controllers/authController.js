@@ -11,6 +11,7 @@ const {
   signupSchema,
   sendOtpSchema,
   recoverPasswordSchema,
+  changePasswordSchema
 } = require("../Helpers/validator.js");
 
 const createToken = (id) => {
@@ -98,11 +99,10 @@ exports.signup = async (req, res, next) => {
     const validateResult = await signupSchema.validateAsync(req.body);
 
     const isUserExist = await User.findOne({ email: validateResult?.email });
-    const isDoctorExist = await Doctor.findOne({
-      email: validateResult?.email,
-    });
+    const isDoctorExist = await Doctor.findOne({ email: validateResult?.email });
+    const isLaboratoryExist = await Laboratory.findOne({ email: validateResult?.email });
 
-    if (isUserExist !== null || isDoctorExist !== null) {
+    if (isUserExist !== null || isDoctorExist !== null || isLaboratoryExist !== null) {
       return res.status(400).json({
         status: false,
         message: "User already exist...!",
@@ -349,3 +349,37 @@ exports.updateUser = async (req, res) => {
     });
   }
 };
+
+exports.changePassword = async (req, res, next) => {
+  try {
+    const validateResult = await changePasswordSchema.validateAsync(req.body);
+
+    const patient = await User.findById(validateResult?.userId);
+    const doctor = await Doctor.findById(validateResult?.userId);
+    const laboratory = await Laboratory.findById(validateResult?.userId);
+
+    isValidPassword = bcrypt.compare(validateResult?.cuurentPassword, patient?.password || doctor?.password || laboratory?.password);
+
+    if (isValidPassword) {
+      let encryptedPassword = await bcrypt.hash(validateResult?.password, 10);
+      await User.findByIdAndUpdate(validateResult?.userId, { $set: { password: encryptedPassword } })
+      await Doctor.findByIdAndUpdate(validateResult?.userId, { $set: { password: encryptedPassword } })
+      await Hospital.findByIdAndUpdate(validateResult?.userId, { $set: { password: encryptedPassword } })
+
+      return (
+        res.status(200).json({
+          status: 200,
+          message: 'Password changed successfully..!'
+        })
+      )
+    } else {
+      res.status(400).json({
+        status: false,
+        messagel: "Current password does not match..!"
+      })
+    }
+  } catch (error) {
+    res.status(400).json(e.message)
+    next()
+  }
+}
