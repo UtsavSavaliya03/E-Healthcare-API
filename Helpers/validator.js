@@ -11,12 +11,14 @@ const signupSchema = Joi.object({
   email: Joi.string().email().trim().required(),
   mobileNo: Joi.string().trim().min(10).max(10).required(),
   password: Joi.string().trim().min(8).max(20).required(),
-  confirmPassword: Joi.string()
-    .trim()
-    .min(8)
-    .max(20)
-    .valid(Joi.ref("password"))
-    .required(),
+  confirmPassword: Joi.string().trim().min(8).max(20).valid(Joi.ref("password")).required(),
+});
+
+const changePasswordSchema = Joi.object({
+  userId: Joi.string().trim(),
+  currentPassword: Joi.string().trim().min(8).max(20).required(),
+  password: Joi.string().trim().min(8).max(20).required(),
+  confirmPassword: Joi.string().trim().min(8).max(20).valid(Joi.ref("password")).required(),
 });
 
 const sendOtpSchema = Joi.object({
@@ -27,12 +29,7 @@ const recoverPasswordSchema = Joi.object({
   userId: Joi.string().trim().required(),
   otp: Joi.string().min(6).max(6).trim().required(),
   password: Joi.string().trim().min(8).max(20).required(),
-  confirmPassword: Joi.string()
-    .trim()
-    .min(8)
-    .max(20)
-    .valid(Joi.ref("password"))
-    .required(),
+  confirmPassword: Joi.string().trim().min(8).max(20).valid(Joi.ref("password")).required(),
 });
 
 const inquirySchema = Joi.object({
@@ -84,7 +81,7 @@ const searchDepartmentSchema = Joi.object({
 const addAppointmentSchema = Joi.object({
   patient: Joi.string().required(),
   doctor: Joi.string().required(),
-  description: Joi.string(),
+  description: Joi.string().empty(''),
   appointmentDate: Joi.date().required(),
   appointmentTime: Joi.string().required(),
 });
@@ -181,6 +178,7 @@ module.exports = {
   authSchema,
   signupSchema,
   sendOtpSchema,
+  changePasswordSchema,
   recoverPasswordSchema,
   inquirySchema,
   replyInquirySchema,
