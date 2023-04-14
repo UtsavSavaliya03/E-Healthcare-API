@@ -15,6 +15,7 @@ const prescriptionRoutes = require('./Routes/Prescription/prescriptionRoutes.js'
 const laboratoryRoutes = require('./Routes/Laboratory/laboratoryRouters.js');
 const testRequestRoutes = require('./Routes/TestRequest/testRouters.js');
 const testReportRoutes = require('./Routes/TestReport/testReportRouters.js');
+const servicesRoutes = require('./Routes/Service/serviceRouters.js');
 
 const DatabaseConnection = require('./Database/database.js');
 
@@ -74,6 +75,8 @@ App.use('/api/v1/testRequest', testRequestRoutes);
 // TestReport
 App.use('/api/v1/testReport', testReportRoutes);
 
+// Services
+App.use('/api/v1/services', servicesRoutes);
 
 App.use('/', (req, res) => {
     res.status(404).json({

@@ -8,7 +8,7 @@ router.get("/",auth,laboratoryController.fetchLaboratories)
 router.get("/:id",auth,laboratoryController.fetchLaboratoryById)
 router.get("/pincode/:pincode",auth,laboratoryController.fetchLaboratoriesByPincode)
 router.delete("/:id",auth,laboratoryController.deleteLaboratory)
-router.put("/:id",auth,laboratoryController.updateLaboratory)
+router.post("/update/:id",auth,laboratoryController.updateLaboratory)
 router.post("/search",auth,laboratoryController.searchLaboratories)
 
 module.exports=router
