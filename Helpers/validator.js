@@ -14,6 +14,12 @@ const signupSchema = Joi.object({
   confirmPassword: Joi.string().trim().min(8).max(20).valid(Joi.ref("password")).required(),
 });
 
+const updateUserSchema = Joi.object({
+  fName: Joi.string().trim().required(),
+  lName: Joi.string().trim().required(),
+  mobileNo: Joi.string().trim().min(10).max(10).required(),
+});
+
 const changePasswordSchema = Joi.object({
   userId: Joi.string().trim(),
   currentPassword: Joi.string().trim().min(8).max(20).required(),

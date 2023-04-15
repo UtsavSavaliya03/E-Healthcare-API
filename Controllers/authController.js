@@ -11,8 +11,10 @@ const {
   signupSchema,
   sendOtpSchema,
   recoverPasswordSchema,
-  changePasswordSchema
+  changePasswordSchema,
+  updateUserSchema
 } = require("../Helpers/validator.js");
+const CloudinaryService = require('../Services/CloudinaryServices.js');
 
 const createToken = (id) => {
   return jwt.sign(
@@ -39,6 +41,16 @@ exports.login = async (req, res, next) => {
 
     // 1) validate email and password
     const validateResult = await authSchema.validateAsync(req.body);
+
+    let blockedUser = await User.findOne({ $and: [{ email: validateResult?.email }, { status: false }] });
+    if (blockedUser != null) {
+      return (
+        res.status(401).json({
+          status: false,
+          message: "Your account is currently blocked, Please contact administrator."
+        })
+      )
+    }
 
     await Modal.findOne({ email: validateResult?.email }).populate(req.params.type == 'doctor' ? "hospital department" : '')
       .exec()
@@ -330,18 +342,61 @@ exports.deleteUser = async (req, res) => {
 
 exports.updateUser = async (req, res) => {
   try {
+
     const _id = req.params.id;
 
-    await User.findByIdAndUpdate({ _id }, req.body, { new: true }).then(
-      (user) => {
-        user.password = undefined;
-        return res.status(200).json({
-          status: true,
-          data: user,
-          message: "Information Updated Successfully...!",
-        });
-      }
-    );
+    if (req?.files !== null || req.body?.removeImg) {
+
+      let profileImg = await CloudinaryService(req?.files?.image);
+
+      await User.findByIdAndUpdate({ _id },
+        {
+          fName: req.body?.fName,
+          lName: req.body?.lName,
+          mobileNo: req.body?.mobileNo,
+          age: req.body?.age,
+          gender: req.body?.gender,
+          addressLine: req.body?.addressLine,
+          state: JSON.parse(req.body?.state),
+          city: JSON.parse(req.body?.city),
+          pincode: req.body?.pincode,
+          profileImg: req.body?.removeImg ? null : profileImg?.url
+        },
+        { new: true }).then(
+          (user) => {
+            user.password = undefined;
+            return res.status(200).json({
+              status: true,
+              data: user,
+              message: "Information Updated Successfully...!",
+            });
+          }
+        );
+    } else {
+      await User.findByIdAndUpdate({ _id },
+        {
+          fName: req.body?.fName,
+          lName: req.body?.lName,
+          mobileNo: req.body?.mobileNo,
+          age: req.body?.age,
+          gender: req.body?.gender,
+          addressLine: req.body?.addressLine,
+          state: JSON.parse(req.body?.state),
+          city: JSON.parse(req.body?.city),
+          pincode: req.body?.pincode,
+        },
+        { new: true }).then(
+          (user) => {
+            user.password = undefined;
+            return res.status(200).json({
+              status: true,
+              data: user,
+              message: "Information Updated Successfully...!",
+            });
+          }
+        );
+    }
+
   } catch (error) {
     return res.status(400).json({
       status: false,
@@ -353,12 +408,12 @@ exports.updateUser = async (req, res) => {
 exports.changePassword = async (req, res, next) => {
   try {
     const validateResult = await changePasswordSchema.validateAsync(req.body);
-    if(req.params.type == 'laboratory') {
+    if (req.params.type == 'laboratory') {
       const laboratory = await Laboratory.findById(validateResult?.userId);
       if (laboratory != null) {
         passwordHandler(Laboratory, laboratory);
       }
-    } else if(req.params.type == 'doctor') {
+    } else if (req.params.type == 'doctor') {
       const doctor = await Doctor.findById(validateResult?.userId);
       if (doctor != null) {
         passwordHandler(Doctor, doctor);
