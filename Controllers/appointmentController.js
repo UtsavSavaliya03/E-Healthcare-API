@@ -31,12 +31,13 @@ exports.addAppointment = async (req, res, next) => {
 
 exports.fetchAppointments = async (req, res) => {
   try {
-    appointmentDetails = await Appointment.find({}).populate("patient", "patientId fName lName age mobileNo");
+    appointmentDetails = await Appointment.find({}).populate("patient", "patientId fName lName age mobileNo").populate("doctor");
 
     res.status(200).json({
       status: true,
       data: appointmentDetails,
     });
+
   } catch (error) {
     res.status(401).json({
       status: false,
@@ -126,7 +127,7 @@ exports.fetchIndividualAppointments = async (req, res) => {
     } else {
       doctorAppointments = await Appointment.find({ doctor: _id }).populate(
         "patient"
-      );
+      ).sort({ appointmentDate: -1 });
       res.status(200).json({
         status: true,
         data: doctorAppointments,
@@ -140,7 +141,7 @@ exports.fetchIndividualAppointments = async (req, res) => {
   }
 };
 
-exports.fetchAppointmentssByStatus = async (req, res) => {
+exports.fetchAppointmentsByStatus = async (req, res) => {
   try {
 
     appointmentDetails = await Appointment.find({ status: req.body.status, doctor: req.body.doctor }).populate(
@@ -153,6 +154,35 @@ exports.fetchAppointmentssByStatus = async (req, res) => {
       data: appointmentDetails,
     });
   } catch (error) {
+    res.status(401).json({
+      status: false,
+      message: "Something went wrong, Please try again latter...!",
+    });
+  }
+};
+
+exports.fetchAppointmentsByDate = async (req, res) => {
+  try {
+    function formatDate() {
+      let date = new Date();
+      const day = date.getDate().toString().padStart(2, '0');
+      const month = (date.getMonth() + 1).toString().padStart(2, '0');
+      const year = date.getFullYear().toString();
+      return `${year}/${month}/${day}`;
+    }
+
+    let statusObj = req.body.status ? { status: req.body.status } : {};
+
+    appointmentDetails = await Appointment.find({ $and: [{ doctor: req.body.id }, { appointmentDate: req.body.date || formatDate() }, statusObj] })
+      .populate("patient", "patientId fName lName age mobileNo email addressLine").populate("doctor");
+
+    res.status(200).json({
+      status: true,
+      data: appointmentDetails,
+    });
+
+  } catch (error) {
+    console.log(error)
     res.status(401).json({
       status: false,
       message: "Something went wrong, Please try again latter...!",
