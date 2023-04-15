@@ -10,6 +10,6 @@ router.post('/sendOtp', authController.sendOtpForPassword);
 router.post('/recoverPassword', authController.recoverPassword);
 router.delete('/:id', auth, authController.deleteUser);
 router.put('/:id', auth, authController.updateUser);
-router.post('/changePassword', auth, authController.changePassword);
+router.post('/changePassword/:type', auth, authController.changePassword);
 
 module.exports = router;
