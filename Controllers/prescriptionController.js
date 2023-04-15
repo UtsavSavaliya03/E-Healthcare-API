@@ -50,7 +50,7 @@ exports.fetchIndividualPrescriptions = async (req, res) => {
     try {
         const _id = req.params.id;
         // fetch by patients
-        if ((patientPrescriptions = await Prescription.find({ patient: _id })).length !== 0) {
+        if ((await Prescription.find({ patient: _id })).length > 0) {
 
             patientPrescriptions = await Prescription.find({ patient: _id })
                 .sort({ createdAt: 1 })
@@ -85,14 +85,16 @@ exports.fetchIndividualPrescriptions = async (req, res) => {
                 });
 
                 if (++counter === patientPrescriptions?.length) {
-                    res.status(200).json({
-                        status: true,
-                        data: responseData,
-                    });
+                    return (
+                        res.status(200).json({
+                            status: true,
+                            data: responseData,
+                        })
+                    )
                 }
             });
 
-        } else {
+        } else if ((await Prescription.find({ doctor: _id })).length > 0) {
             // fetch by doctor
             doctorPrescriptions = await Prescription.find({ doctor: _id })
                 .sort({ createdAt: 1 })
@@ -127,12 +129,21 @@ exports.fetchIndividualPrescriptions = async (req, res) => {
                 });
 
                 if (++counter === doctorPrescriptions?.length) {
-                    res.status(200).json({
-                        status: true,
-                        data: responseData,
-                    });
+                    return (
+                        res.status(200).json({
+                            status: true,
+                            data: responseData,
+                        })
+                    )
                 }
             });
+        } else {
+            return (
+                res.status(200).json({
+                    status: true,
+                    data: [],
+                })
+            )
         }
     } catch (error) {
         res.status(401).json({

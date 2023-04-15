@@ -353,33 +353,51 @@ exports.updateUser = async (req, res) => {
 exports.changePassword = async (req, res, next) => {
   try {
     const validateResult = await changePasswordSchema.validateAsync(req.body);
-
-    const patient = await User.findById(validateResult?.userId);
-    const doctor = await Doctor.findById(validateResult?.userId);
-    const laboratory = await Laboratory.findById(validateResult?.userId);
-
-    isValidPassword = bcrypt.compare(validateResult?.cuurentPassword, patient?.password || doctor?.password || laboratory?.password);
-
-    if (isValidPassword) {
-      let encryptedPassword = await bcrypt.hash(validateResult?.password, 10);
-      await User.findByIdAndUpdate(validateResult?.userId, { $set: { password: encryptedPassword } })
-      await Doctor.findByIdAndUpdate(validateResult?.userId, { $set: { password: encryptedPassword } })
-      await Hospital.findByIdAndUpdate(validateResult?.userId, { $set: { password: encryptedPassword } })
-
-      return (
-        res.status(200).json({
-          status: 200,
-          message: 'Password changed successfully..!'
-        })
-      )
+    if(req.params.type == 'laboratory') {
+      const laboratory = await Laboratory.findById(validateResult?.userId);
+      if (laboratory != null) {
+        passwordHandler(Laboratory, laboratory);
+      }
+    } else if(req.params.type == 'doctor') {
+      const doctor = await Doctor.findById(validateResult?.userId);
+      if (doctor != null) {
+        passwordHandler(Doctor, doctor);
+      }
     } else {
-      res.status(400).json({
-        status: false,
-        messagel: "Current password does not match..!"
-      })
+      const patient = await User.findById(validateResult?.userId);
+      if (patient != null) {
+        passwordHandler(User, patient);
+      }
     }
+
+    async function passwordHandler(Modal, user) {
+      const isValidPassword = await bcrypt.compare(validateResult?.currentPassword, user?.password);
+
+      if (isValidPassword) {
+        const encryptedPassword = await bcrypt.hash(validateResult?.password, 10);
+        await Modal.findByIdAndUpdate(validateResult?.userId, { $set: { password: encryptedPassword } });
+
+        return (
+          res.status(200).json({
+            status: true,
+            message: 'Password changed successfully..!'
+          })
+        )
+      } else {
+        res.status(400).json({
+          status: false,
+          message: "Current password does not match..!"
+        })
+      }
+    }
+
   } catch (error) {
-    res.status(400).json(e.message)
+    if (error.isJoi === true) {
+      return res.status(422).json({
+        status: false,
+        message: error?.details[0]?.message,
+      });
+    }
     next()
   }
 }

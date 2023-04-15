@@ -13,7 +13,6 @@ const appointmentSchema = new mongoose.Schema({
     },
     description: {
         type: String,
-        required: true
     },
     appointmentDate: {
         type: Date,
