@@ -456,3 +456,24 @@ exports.changePassword = async (req, res, next) => {
     next()
   }
 }
+
+exports.updateUserStatus = async (req, res) => {
+  try {
+    const _id = req.body.id;
+
+    await User.findByIdAndUpdate({ _id }, { active: req.body.status })
+    .then(()=>{
+      return (
+        res.status(200).json({
+          status: true,
+          message: 'Status updated successfully.'
+        })
+      )
+    })
+  } catch (error) {
+    return res.status(400).json({
+      status: false,
+      message: "Something went wrong, Please try again latter...!",
+    });
+  }
+};

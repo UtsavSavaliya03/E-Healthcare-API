@@ -88,7 +88,7 @@ const addAppointmentSchema = Joi.object({
   patient: Joi.string().required(),
   doctor: Joi.string().required(),
   description: Joi.string().trim().empty(""),
-  appointmentDate: Joi.date().required(),
+  appointmentDate: Joi.string().required(),
   appointmentTime: Joi.string().required(),
 });
 

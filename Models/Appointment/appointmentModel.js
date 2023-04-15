@@ -15,7 +15,7 @@ const appointmentSchema = new mongoose.Schema({
         type: String,
     },
     appointmentDate: {
-        type: Date,
+        type: String,
         required: true
     },
     appointmentTime: {
