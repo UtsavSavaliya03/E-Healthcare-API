@@ -26,6 +26,9 @@ const userSchema = new mongoose.Schema({
     profileImg: {
         type: String
     },
+    gender: {
+        type: String
+    },
     age: {
         type: Number
     },
