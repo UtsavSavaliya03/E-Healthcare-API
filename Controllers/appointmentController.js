@@ -186,7 +186,7 @@ exports.fetchAppointmentsByDate = async (req, res) => {
     let statusObj = req.body.status ? { status: req.body.status } : {};
 
     appointmentDetails = await Appointment.find({ $and: [{ doctor: req.body.id }, { appointmentDate: req.body.date || formatDate() }, statusObj] })
-      .populate("patient", "patientId fName lName age mobileNo email addressLine").populate("doctor");
+      .populate("patient", "-password").populate("doctor", "-password");
 
     res.status(200).json({
       status: true,
