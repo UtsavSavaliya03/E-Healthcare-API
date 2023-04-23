@@ -561,3 +561,195 @@ exports.newsletterMail = (receiverEmail, subject, userName, body) => {
         </html>`
     })
 }
+exports.acceptAppointmentMail = (receiverEmail, subject, userName, body) => {
+    return ({
+        from: process.env.MAILER_EMAIL, // sender address
+        to: receiverEmail, // list of receivers
+        subject: subject, // Subject line
+        html: `<!DOCTYPE html>
+        <html>
+        
+        <head>
+            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+            <title>Your Appointment is Accepted!</title>
+            <style>
+                body {
+                    background-color: #f2f2f2;
+                    font-family: Arial, sans-serif;
+                }
+        
+                .container {
+                    margin: 0 auto;
+                }
+        
+                .header {
+                    background: linear-gradient(90deg, rgb(13, 3, 213) 0%, rgb(12, 12, 195) 26%, rgba(0, 212, 255, 1) 100%);
+                    color: white;
+                    padding: 20px;
+                    text-align: center;
+                }
+        
+                .content {
+                    background: linear-gradient(to bottom right, #ffffff, #f2f2f2);
+                    padding: 20px;
+                    font-size: 18px;
+                    line-height: 1.5;
+                    color: #333333;
+                    text-align: justify;
+                }
+        
+                .footer {
+                    background: linear-gradient(90deg, rgb(13, 3, 213) 0%, rgb(12, 12, 195) 26%, rgba(0, 212, 255, 1) 100%);
+                    color: #666666;
+                    font-size: 14px;
+                    text-align: center;
+                    padding: 20px;
+                }
+            </style>
+        </head>
+        
+        <body>
+            <div class="container">
+                <div class="header">
+                    <div>
+                        <img style="width: 180px"
+                            src="https://res.cloudinary.com/drijxiov2/image/upload/v1677932558/Logo_tqsoyu.png" alt="Logo"
+                            class="logo" />
+                    </div>
+                    <h1>Your Appointment Is Accepted!</h1>
+        
+                </div>
+                <div class="content">
+                    <p>
+                        Dear ${userName},
+                    </p>
+                    <p>
+                        I am pleased to inform you that your appointment has been accepted by Dr. ${body.appointmentData.doctor.fName} ${body.appointmentData.doctor.lName} at HealthHorizon.
+                        We look forward to providing you with exceptional healthcare services and making your experience as
+                        comfortable and positive as possible.
+                    </p>
+                    <p>
+                        Your appointment is scheduled for <b>${body?.appointmentData?.appointmentDate} at ${body?.appointmentData?.appointmentTime}</b> at our HealthHorizon, <b>${body.hospitalData.name} located at ${body.hospitalData.addressLine}, ${body.hospitalData.city.name}, ${body.hospitalData.state.name}.</b>
+                        Please make sure to arrive 15 minutes before your scheduled appointment time to complete any necessary
+                        paperwork and to allow time for parking.
+                    </p>
+                    <p>
+                        If you need to cancel your appointment, please let us know as soon as possible so that we can offer the time slot to another patient.
+                    </p>
+                    <p>
+                        If you have any questions or concerns prior to your appointment, please don't hesitate to contact us at
+                        +91 ${body.appointmentData.doctor.mobileNo} or by replying to this email.
+                    </p>
+                    <p>
+                        We appreciate the opportunity to serve you and look forward to meeting you soon.
+                    </p>
+                    <br>
+                    <p>Thanks you,</p>
+                    <p>HealthHorizon Team</p>
+                </div>
+        
+                <div class="footer">
+                    <div style="color: white; font-weight: 600">
+                        <p>Thank you for choosing HealthHorizon. We look forward to seeing you soon.</p>
+                    </div>
+                </div>
+            </div>
+        </body>
+        
+        </html>`
+    })
+}
+exports.rejectAppointmentMail = (receiverEmail, subject, userName, body) => {
+    return ({
+        from: process.env.MAILER_EMAIL, // sender address
+        to: receiverEmail, // list of receivers
+        subject: subject, // Subject line
+        html: `<!DOCTYPE html>
+        <html>
+        
+        <head>
+            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+            <title>Your Appointment Is Rejected!</title>
+            <style>
+                body {
+                    background-color: #f2f2f2;
+                    font-family: Arial, sans-serif;
+                }
+        
+                .container {
+                    margin: 0 auto;
+                }
+        
+                .header {
+                    background: linear-gradient(90deg, rgb(13, 3, 213) 0%, rgb(12, 12, 195) 26%, rgba(0, 212, 255, 1) 100%);
+                    color: white;
+                    padding: 20px;
+                    text-align: center;
+                }
+        
+                .content {
+                    background: linear-gradient(to bottom right, #ffffff, #f2f2f2);
+                    padding: 20px;
+                    font-size: 18px;
+                    line-height: 1.5;
+                    color: #333333;
+                    text-align: justify;
+                }
+        
+                .footer {
+                    background: linear-gradient(90deg, rgb(13, 3, 213) 0%, rgb(12, 12, 195) 26%, rgba(0, 212, 255, 1) 100%);
+                    color: #666666;
+                    font-size: 14px;
+                    text-align: center;
+                    padding: 20px;
+                }
+            </style>
+        </head>
+        
+        <body>
+            <div class="container">
+                <div class="header">
+                    <div>
+                        <img style="width: 180px"
+                            src="https://res.cloudinary.com/drijxiov2/image/upload/v1677932558/Logo_tqsoyu.png" alt="Logo"
+                            class="logo" />
+                    </div>
+                    <h1>Your Appointment is Rejected!</h1>
+        
+                </div>
+                <div class="content">
+                    <p>
+                        Dear ${userName},
+                    </p>
+                    <p>
+                        I regret to inform you that we are unable to accept your appointment with Dr. ${body.appointmentData.doctor.fName} ${body.appointmentData.doctor.lName} at
+                        HealthHorizon. Unfortunately, the doctor is currently unavailable during the requested appointment time
+                        and we are unable to schedule an alternative time that suits your availability.
+                    </p>
+                    <p>
+                        We understand that this news may be disappointing, and we apologize for any inconvenience that this may
+                        have caused you. We would like to assure you that we will do our best to accommodate your healthcare
+                        needs in the future.
+                    </p>
+                    <p>
+                        Please feel free to contact us at +91 ${body.appointmentData.doctor.mobileNo} or by replying to this email if you
+                        have any further questions or concerns. We would be happy to assist you in finding an alternative
+                        healthcare provider or scheduling an appointment at a later date.
+                    </p>
+                    <br>
+                    <p>Thanks you,</p>
+                    <p>HealthHorizon Team</p>
+                </div>
+        
+                <div class="footer">
+                    <div style="color: white; font-weight: 600">
+                        <p>Once again, we apologize for any inconvenience and we appreciate your understanding in this matter.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </body>
+        
+        </html>`
+    })
+}

@@ -202,5 +202,6 @@ module.exports = {
   searchLaboratorySchema,
   addTestRequestSchema,
   addTestReportSchema,
-  updateDepartmentSchema
+  updateDepartmentSchema,
+  newsletterReplytSchema
 };

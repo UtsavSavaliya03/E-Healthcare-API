@@ -210,6 +210,31 @@ exports.adminDashboardData = async (req, res, next) => {
         const totalLaboratories = await Laboratory.count({});
         const activePatients = await User.find({ role: 3, active: true })
 
+        function combineArrays(hospitalsArray, labsArray) {
+            // Create a new array with all the months from both arrays
+            const months = [...new Set(hospitalsArray.map((item) => item.month).concat(labsArray.map((item) => item.month)))];
+
+            // Create a new array with the combined data
+            const combinedArray = months.map((month) => {
+                // Find the corresponding hospital data for the month
+                const hospitalData = hospitalsArray.find((item) => item.month === month);
+
+                // Find the corresponding labs data for the month
+                const labsData = labsArray.find((item) => item.month === month);
+
+                // Create a new object with the combined data
+                return {
+                    month,
+                    Hospitals: hospitalData ? hospitalData.Hospitals : 0,
+                    hospitalsColor: "hsl(229, 70%, 50%)",
+                    Laboratories: labsData ? labsData.Laboratories : 0,
+                    laboratoriesColor: "hsl(296, 70%, 50%)",
+                };
+            });
+
+            return combinedArray;
+        }
+
         const doctorsData = await Doctor.aggregate([
             {
                 $group: {
@@ -378,6 +403,8 @@ exports.adminDashboardData = async (req, res, next) => {
             },
         ])
 
+        let hospitalsAndLaboratories = combineArrays(hospitalsData, laboratoriesData)
+
         return (
             res.status(200).json({
                 status: true,
@@ -389,8 +416,7 @@ exports.adminDashboardData = async (req, res, next) => {
                     activePatients: activePatients,
                     doctorsData: doctorsData,
                     patientsData: patientsData,
-                    hospitalsData: hospitalsData,
-                    laboratoriesData: laboratoriesData
+                    hospitalsAndLaboratoriesData: hospitalsAndLaboratories,
                 }
             })
         )

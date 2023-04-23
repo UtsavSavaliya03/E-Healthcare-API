@@ -1,6 +1,8 @@
 const { addAppointmentSchema } = require("../Helpers/validator.js");
 const Appointment = require("../Models/Appointment/appointmentModel.js");
 const Doctor = require("../Models/Doctor/doctorModel.js");
+const Hospital = require("../Models/Hospital/hospitalModel.js");
+const nodeMailer = require('../Services/NodeMailer.js');
 
 exports.addAppointment = async (req, res, next) => {
   try {
@@ -67,7 +69,17 @@ exports.updateAppointment = async (req, res) => {
   try {
     const _id = req.params.id;
 
-    await Appointment.findByIdAndUpdate({ _id }, req.body);
+    await Appointment.findByIdAndUpdate({ _id }, req.body, { new: true });
+    const appointmentData = await Appointment.findOne({ _id }).populate("patient").populate("doctor")
+    const hospitalData = await Hospital.findOne({ _id: appointmentData.doctor.hospital })
+
+    if (req.body.status == 1 && req.body.type == 'Doctor') {
+      const header = `Hello, ${appointmentData.patient.fName} ${appointmentData.patient.lName} your appointment is accepted by Dr. ${appointmentData.doctor.fName} ${appointmentData.doctor.lName}`;
+      nodeMailer('AcceptAppointmentMail', appointmentData.patient.email, header, `${appointmentData.patient.fName} ${appointmentData.patient.lName}`, { appointmentData: appointmentData, hospitalData: hospitalData });
+    } else if (req.body.status == 3 && req.body.type == 'Doctor') {
+      const header = `Hello, ${appointmentData.patient.fName} ${appointmentData.patient.lName} your appointment is rejected by Dr. ${appointmentData.doctor.fName} ${appointmentData.doctor.lName}`;
+      nodeMailer('RejectAppointmentMail', appointmentData.patient.email, header, `${appointmentData.patient.fName} ${appointmentData.patient.lName}`, { appointmentData: appointmentData });
+    }
 
     return res.status(200).json({
       status: true,
