@@ -42,7 +42,8 @@ exports.login = async (req, res, next) => {
     // 1) validate email and password
     const validateResult = await authSchema.validateAsync(req.body);
 
-    let blockedUser = await User.findOne({ $and: [{ email: validateResult?.email }, { status: false }] });
+    let blockedUser = await User.findOne({ $and: [{ email: validateResult?.email }, { active: false }] });
+    
     if (blockedUser != null) {
       return (
         res.status(401).json({

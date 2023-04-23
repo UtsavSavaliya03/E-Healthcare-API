@@ -49,7 +49,7 @@ exports.addLaboratory = async (req, res, next) => {
         email: laboratory?.email,
         password: password,
       });
-      
+
       res.status(201).json({
         status: true,
         message: "Laboratory added successfully...!",
@@ -102,12 +102,10 @@ exports.fetchLaboratoryById = async (req, res) => {
 
 exports.fetchLaboratoriesByPincode = async (req, res) => {
   try {
-    var pincode = req.params.pincode;
-
-    const isLaboratoryExist = await Laboratory.findOne({ pincode });
+    const isLaboratoryExist = await Laboratory.findOne({ pincode: req.params.pincode });
 
     if (isLaboratoryExist !== null) {
-      const laboratoriesDetails = await Laboratory.find({ pincode });
+      const laboratoriesDetails = await Laboratory.find({ pincode: req.params.pincode });
       res.status(200).json({
         status: true,
         data: laboratoriesDetails,
