@@ -135,8 +135,14 @@ exports.totalPatientsOfDoctor = async (req, res, next) => {
         const totalConsultedPatientData = await Appointment.aggregate([
             {
                 $match: {
-                    // Match patients with a specific doctor id and status
-                    $expr: { $and: [{ doctor: req.params.id }, { status: 2 }] }
+                    // Match patients with a specific doctor id
+                    doctor: ObjectId(req.params.id),
+                }
+            },
+            {
+                $match: {
+                    // Match patients with a specific appointment status
+                    status: 2,
                 }
             },
             {
