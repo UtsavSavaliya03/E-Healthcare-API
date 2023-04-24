@@ -7,19 +7,38 @@ const nodeMailer = require('../Services/NodeMailer.js');
 exports.addAppointment = async (req, res, next) => {
   try {
     const validateResult = await addAppointmentSchema.validateAsync(req.body);
-    const appointment = await Appointment.create({
-      patient: validateResult?.patient,
-      doctor: validateResult?.doctor,
-      appointmentDate: validateResult?.appointmentDate,
-      appointmentTime: validateResult?.appointmentTime,
-      description: validateResult?.description,
-    });
 
-    res.status(201).json({
-      status: true,
-      message: "Your appointment requested successfully...!",
-      data: appointment._id,
-    });
+    if (validateResult?.appoinmentId) {
+
+      await Appointment.findByIdAndUpdate(validateResult?.appoinmentId, {
+        $set: {
+          appointmentDate: validateResult?.appointmentDate,
+          appointmentTime: validateResult?.appointmentTime,
+          description: validateResult?.description,
+          status: 0
+        }
+      })
+
+      res.status(201).json({
+        status: true,
+        message: "Your appointment rescheduled successfully...!",
+        data: validateResult?.appoinmentId,
+      });
+    } else {
+      const appointment = await Appointment.create({
+        patient: validateResult?.patient,
+        doctor: validateResult?.doctor,
+        appointmentDate: validateResult?.appointmentDate,
+        appointmentTime: validateResult?.appointmentTime,
+        description: validateResult?.description,
+      });
+
+      res.status(201).json({
+        status: true,
+        message: "Your appointment requested successfully...!",
+        data: appointment._id,
+      });
+    }
   } catch (error) {
     if (error.isJoi === true) {
       return res.status(422).json({
@@ -115,6 +134,7 @@ exports.fetchIndividualAppointments = async (req, res) => {
           mobileNo: 1,
           hospital: 1,
           department: 1,
+          profileImg: 1,
         })
           .populate("hospital", "name email mobileNo addressLine city state")
           .populate("department", "name");
@@ -186,6 +206,26 @@ exports.fetchAppointmentsByDate = async (req, res) => {
     let statusObj = req.body.status ? { status: req.body.status } : {};
 
     appointmentDetails = await Appointment.find({ $and: [{ doctor: req.body.id }, { appointmentDate: req.body.date || formatDate() }, statusObj] })
+      .populate("patient", "-password").populate("doctor", "-password");
+
+    res.status(200).json({
+      status: true,
+      data: appointmentDetails,
+    });
+
+  } catch (error) {
+    console.log(error)
+    res.status(401).json({
+      status: false,
+      message: "Something went wrong, Please try again latter...!",
+    });
+  }
+};
+
+exports.fetchNonEmptyAppointmentSlots = async (req, res) => {
+  try {
+
+    appointmentDetails = await Appointment.find({ $and: [{ doctor: req.body.id }, { appointmentDate: req.body.date }, { status: { $lt: 3 } }] })
       .populate("patient", "-password").populate("doctor", "-password");
 
     res.status(200).json({

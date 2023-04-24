@@ -10,5 +10,6 @@ router.delete('/:id', auth, appointmentControllers.deleteAppointment);
 router.put('/:id', auth, appointmentControllers.updateAppointment);
 router.post('/status', auth, appointmentControllers.fetchAppointmentsByStatus);
 router.post('/date', appointmentControllers.fetchAppointmentsByDate);
+router.post('/nonEmptySlot', appointmentControllers.fetchNonEmptyAppointmentSlots);
 
 module.exports = router
