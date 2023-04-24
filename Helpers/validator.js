@@ -90,6 +90,7 @@ const addAppointmentSchema = Joi.object({
   description: Joi.string().trim().empty(""),
   appointmentDate: Joi.string().required(),
   appointmentTime: Joi.string().required(),
+  appoinmentId: Joi.string()
 });
 
 const newsletterSchema = Joi.object({
