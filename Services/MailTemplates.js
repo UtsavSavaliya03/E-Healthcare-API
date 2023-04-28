@@ -2,13 +2,13 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 exports.passwordRecoveryMail = (receiverEmail, subject, userName, otp) => {
-    return ({
-        from: process.env.MAILER_EMAIL, // sender address
-        to: receiverEmail, // list of receivers
-        subject: subject, // Subject line
-        text: "Hey " + userName + ", You asked and we delivered, let's reset your password with the help of One Time Password. Your OTP is " + otp + "," + "which will be expire in next 03 minutes.", // plain text body
+  return ({
+    from: process.env.MAILER_EMAIL, // sender address
+    to: receiverEmail, // list of receivers
+    subject: subject, // Subject line
+    text: "Hey " + userName + ", You asked and we delivered, let's reset your password with the help of One Time Password. Your OTP is " + otp + "," + "which will be expire in next 03 minutes.", // plain text body
 
-        html: `<!DOCTYPE html>
+    html: `<!DOCTYPE html>
         <html lang="en">
         <head>
             <meta charset="UTF-8">
@@ -90,16 +90,16 @@ exports.passwordRecoveryMail = (receiverEmail, subject, userName, otp) => {
         </body>
         
         </html>`
-    })
+  })
 }
 
 exports.inquiryResponseMail = (receiverEmail, subject, userName, body) => {
-    return ({
-        from: process.env.MAILER_EMAIL, // sender address
-        to: receiverEmail, // list of receivers
-        subject: subject, // Subject line
-        text: "Hi " + userName + body, // plain text body
-        html: `<!DOCTYPE html>
+  return ({
+    from: process.env.MAILER_EMAIL, // sender address
+    to: receiverEmail, // list of receivers
+    subject: subject, // Subject line
+    text: "Hi " + userName + body, // plain text body
+    html: `<!DOCTYPE html>
         <html>
           <head>
             <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -162,15 +162,15 @@ exports.inquiryResponseMail = (receiverEmail, subject, userName, body) => {
             </div>
           </body>
         </html>`
-    })
+  })
 }
 
 exports.doctorWelcomeMail = (receiverEmail, subject, userName, body) => {
-    return ({
-        from: process.env.MAILER_EMAIL, // sender address
-        to: receiverEmail, // list of receivers
-        subject: subject, // Subject line
-        html: `<!DOCTYPE html>
+  return ({
+    from: process.env.MAILER_EMAIL, // sender address
+    to: receiverEmail, // list of receivers
+    subject: subject, // Subject line
+    html: `<!DOCTYPE html>
         <html>
           <head>
             <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -264,14 +264,14 @@ exports.doctorWelcomeMail = (receiverEmail, subject, userName, body) => {
             </div>
           </body>
         </html>`
-    })
+  })
 }
 exports.laboratoryWelcomeMail = (receiverEmail, subject, userName, body) => {
-    return ({
-        from: process.env.MAILER_EMAIL, // sender address
-        to: receiverEmail, // list of receivers
-        subject: subject, // Subject line
-        html: `<!DOCTYPE html>
+  return ({
+    from: process.env.MAILER_EMAIL, // sender address
+    to: receiverEmail, // list of receivers
+    subject: subject, // Subject line
+    html: `<!DOCTYPE html>
         <html>
         
         <head>
@@ -367,15 +367,15 @@ exports.laboratoryWelcomeMail = (receiverEmail, subject, userName, body) => {
         </body>
         
         </html>`
-    })
+  })
 }
 
 exports.patientWelcomeMail = (receiverEmail, subject, userName) => {
-    return ({
-        from: process.env.MAILER_EMAIL, // sender address
-        to: receiverEmail, // list of receivers
-        subject: subject, // Subject line
-        html: `<!DOCTYPE html>
+  return ({
+    from: process.env.MAILER_EMAIL, // sender address
+    to: receiverEmail, // list of receivers
+    subject: subject, // Subject line
+    html: `<!DOCTYPE html>
         <html>
           <head>
             <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -472,15 +472,15 @@ exports.patientWelcomeMail = (receiverEmail, subject, userName) => {
             </div>
           </body>
         </html>`
-    })
+  })
 }
 
 exports.newsletterMail = (receiverEmail, subject, userName, body) => {
-    return ({
-        from: process.env.MAILER_EMAIL, // sender address
-        to: receiverEmail, // list of receivers
-        subject: subject, // Subject line
-        html: `<!DOCTYPE html>
+  return ({
+    from: process.env.MAILER_EMAIL, // sender address
+    to: receiverEmail, // list of receivers
+    subject: subject, // Subject line
+    html: `<!DOCTYPE html>
         <html>
           <head>
             <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -559,14 +559,14 @@ exports.newsletterMail = (receiverEmail, subject, userName, body) => {
             </div>
           </body>
         </html>`
-    })
+  })
 }
 exports.acceptAppointmentMail = (receiverEmail, subject, userName, body) => {
-    return ({
-        from: process.env.MAILER_EMAIL, // sender address
-        to: receiverEmail, // list of receivers
-        subject: subject, // Subject line
-        html: `<!DOCTYPE html>
+  return ({
+    from: process.env.MAILER_EMAIL, // sender address
+    to: receiverEmail, // list of receivers
+    subject: subject, // Subject line
+    html: `<!DOCTYPE html>
         <html>
         
         <head>
@@ -657,14 +657,14 @@ exports.acceptAppointmentMail = (receiverEmail, subject, userName, body) => {
         </body>
         
         </html>`
-    })
+  })
 }
 exports.rejectAppointmentMail = (receiverEmail, subject, userName, body) => {
-    return ({
-        from: process.env.MAILER_EMAIL, // sender address
-        to: receiverEmail, // list of receivers
-        subject: subject, // Subject line
-        html: `<!DOCTYPE html>
+  return ({
+    from: process.env.MAILER_EMAIL, // sender address
+    to: receiverEmail, // list of receivers
+    subject: subject, // Subject line
+    html: `<!DOCTYPE html>
         <html>
         
         <head>
@@ -751,5 +751,197 @@ exports.rejectAppointmentMail = (receiverEmail, subject, userName, body) => {
         </body>
         
         </html>`
-    })
+  })
+}
+exports.rejectTestRequestMail = (receiverEmail, subject, userName, body) => {
+  return ({
+    from: process.env.MAILER_EMAIL, // sender address
+    to: receiverEmail, // list of receivers
+    subject: subject, // Subject line
+    html: `<!DOCTYPE html>
+        <html>
+        
+        <head>
+            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+            <title>Your Test Report Request Is Rejected!</title>
+            <style>
+                body {
+                    background-color: #f2f2f2;
+                    font-family: Arial, sans-serif;
+                }
+        
+                .container {
+                    margin: 0 auto;
+                }
+        
+                .header {
+                    background: linear-gradient(90deg, rgb(13, 3, 213) 0%, rgb(12, 12, 195) 26%, rgba(0, 212, 255, 1) 100%);
+                    color: white;
+                    padding: 20px;
+                    text-align: center;
+                }
+        
+                .content {
+                    background: linear-gradient(to bottom right, #ffffff, #f2f2f2);
+                    padding: 20px;
+                    font-size: 18px;
+                    line-height: 1.5;
+                    color: #333333;
+                    text-align: justify;
+                }
+        
+                .footer {
+                    background: linear-gradient(90deg, rgb(13, 3, 213) 0%, rgb(12, 12, 195) 26%, rgba(0, 212, 255, 1) 100%);
+                    color: #666666;
+                    font-size: 14px;
+                    text-align: center;
+                    padding: 20px;
+                }
+            </style>
+        </head>
+        
+        <body>
+            <div class="container">
+                <div class="header">
+                    <div>
+                        <img style="width: 180px"
+                            src="https://res.cloudinary.com/drijxiov2/image/upload/v1677932558/Logo_tqsoyu.png" alt="Logo"
+                            class="logo" />
+                    </div>
+                    <h1>Your Test Report Request Is Rejected!</h1>
+        
+                </div>
+                <div class="content">
+                    <p>
+                        Dear ${userName},
+                    </p>
+                    <p>
+                        I hope this message finds you well. We received your request for your test report from
+                        ${body.testRequestData.laboratory.name}. We apologize for any inconvenience, but unfortunately, we are unable to
+                        fulfill your request at this time.
+                    </p>
+                    <p>
+                        As a medical laboratory, we are bound by strict regulations and guidelines that prohibit us from
+                        releasing test reports directly to patients. Test reports are confidential and must be sent to the
+                        ordering physician or healthcare provider digitally who will then review and interpret the results with
+                        you.
+                    </p>
+                    <p>
+                        If you require a copy of your test report, we suggest you to visit your dashboard from where you can
+                        download or view your test report.
+                    </p>
+                    <br>
+                    <p>Thanks you,</p>
+                    <p>HealthHorizon Team</p>
+                </div>
+        
+                <div class="footer">
+                    <div style="color: white; font-weight: 600">
+                        <p>Once again, we apologize for any inconvenience and we appreciate your understanding in this matter.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </body>
+        
+        </html>`
+  })
+}
+exports.acceptTestRequestMail = (receiverEmail, subject, userName, body) => {
+  return ({
+    from: process.env.MAILER_EMAIL, // sender address
+    to: receiverEmail, // list of receivers
+    subject: subject, // Subject line
+    html: `<!DOCTYPE html>
+        <html>
+        
+        <head>
+            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+            <title>Your Test Report Request Is Accepted!</title>
+            <style>
+                body {
+                    background-color: #f2f2f2;
+                    font-family: Arial, sans-serif;
+                }
+        
+                .container {
+                    margin: 0 auto;
+                }
+        
+                .header {
+                    background: linear-gradient(90deg, rgb(13, 3, 213) 0%, rgb(12, 12, 195) 26%, rgba(0, 212, 255, 1) 100%);
+                    color: white;
+                    padding: 20px;
+                    text-align: center;
+                }
+        
+                .content {
+                    background: linear-gradient(to bottom right, #ffffff, #f2f2f2);
+                    padding: 20px;
+                    font-size: 18px;
+                    line-height: 1.5;
+                    color: #333333;
+                    text-align: justify;
+                }
+        
+                .footer {
+                    background: linear-gradient(90deg, rgb(13, 3, 213) 0%, rgb(12, 12, 195) 26%, rgba(0, 212, 255, 1) 100%);
+                    color: #666666;
+                    font-size: 14px;
+                    text-align: center;
+                    padding: 20px;
+                }
+            </style>
+        </head>
+        
+        <body>
+            <div class="container">
+                <div class="header">
+                    <div>
+                        <img style="width: 180px"
+                            src="https://res.cloudinary.com/drijxiov2/image/upload/v1677932558/Logo_tqsoyu.png" alt="Logo"
+                            class="logo" />
+                    </div>
+                    <h1>Your Test Report Request Is Accepted!</h1>
+        
+                </div>
+                <div class="content">
+                    <p>
+                        Dear ${userName},
+                    </p>
+                    <p>
+                        I am writing in response to your recent request for the acceptance of a test report from ${body.testRequestData.laboratory.name}. We are pleased to inform you that we have received the report and will be processing
+                        it promptly.
+                    </p>
+                    <p>
+                        Please note that the report must meet our acceptance criteria and will be reviewed by our medical team
+                        before being approved. Once it has been approved, we will provide you with further instructions on how
+                        to proceed with the next steps.
+                    </p>
+                    <p>
+                        In the meantime, if you have any questions or concerns, please feel free to contact us at <br />
+                        <strong>
+                            E-Mail: ${body.testRequestData.laboratory.email}
+                            <br>
+                            Contact No: ${body.testRequestData.laboratory.mobileNo}
+                            <br>
+                        </strong>
+                        Our team is available to assist you with any queries you may have.
+                    </p>
+                    <br>
+                    <p>Thanks you,</p>
+                    <p>HealthHorizon Team</p>
+                </div>
+        
+                <div class="footer">
+                    <div style="color: white; font-weight: 600">
+                        <p> Thank you for choosing us for your medical testing needs. We look forward to
+                            continuing to serve you in the future.</p>
+                    </div>
+                </div>
+            </div>
+        </body>
+        
+        </html>`
+  })
 }
