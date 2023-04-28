@@ -1,5 +1,6 @@
 const TestRequest = require("../Models/TestRequest/testRequestModel.js");
 const { addTestRequestSchema } = require("../Helpers/validator.js");
+const nodeMailer = require('../Services/NodeMailer.js');
 
 exports.addTestRequest = async (req, res, next) => {
   try {
@@ -69,6 +70,18 @@ exports.updateTestRequest = async (req, res) => {
     const _id = req.params.id;
 
     await TestRequest.findByIdAndUpdate({ _id }, req.body);
+
+    const testRequestData = await TestRequest.findOne({ _id }).populate("patient").populate("doctor").populate("laboratory")
+
+
+    if (req.body.status == 1) {
+      const header = `Hello, ${testRequestData.patient.fName} ${testRequestData.patient.lName} your ${testRequestData.type} test request is accepted by ${testRequestData.laboratory.name} `;
+      nodeMailer('AcceptTestRequestMail', testRequestData.patient.email, header, `${testRequestData.patient.fName} ${testRequestData.patient.lName}`, { testRequestData: testRequestData });
+    } else if (req.body.status == 3) {
+      const header = `Hello, ${testRequestData.patient.fName} ${testRequestData.patient.lName} your ${testRequestData.type} test request is rejected by ${testRequestData.laboratory.name} `;
+      nodeMailer('RejectTestRequestMail', testRequestData.patient.email, header, `${testRequestData.patient.fName} ${testRequestData.patient.lName}`, { testRequestData: testRequestData });
+    }
+
 
     return res.status(200).json({
       status: true,
